@@ -7,189 +7,195 @@
 #include <thread>  // For std::this_thread::sleep_for
 #include <chrono>  // For std::chrono::milliseconds
 
-
-constexpr float DEGREES_TO_RADIANS = (3.14159f / 360.f);
-
 Profiler* profiler = nullptr;
 
-void test1(){
-    PROFILER_ENTER("Trig Speed Test");
-    constexpr int TRIG_TEST_NUM_ENTRIES =100'000;
-    float randomYawDegreeTable[TRIG_TEST_NUM_ENTRIES] = {};  
-
-    PROFILER_ENTER("Random Angle Generation");
-    for (int i = 0; i < TRIG_TEST_NUM_ENTRIES; i++) {
-        randomYawDegreeTable[i] = 360.f * float(rand()) / float(RAND_MAX);
+// Generate a large random array
+std::vector<int> generateRandomArray(int size) {
+    std::vector<int> arr(size);
+    for (int i = 0; i < size; i++) {
+        arr[i] = rand() % 10000;  // Random numbers between 0 and 9999
     }
-    //profiler->ExitSection("Random Angle Generation");
-    //profiler->ExitSection("Random Angle Generation", __LINE__, __FILE__, __FUNCTION__);
-    PROFILER_EXIT("Random Angle Generation");
-    float biggestSoFar = 0.f;
-
-    PROFILER_ENTER("Total Cos and Sin Compute");
-    for (int i=0; i < TRIG_TEST_NUM_ENTRIES; i++) {
-        PROFILER_ENTER("Cos and Sin Compute");
-        float yawDegrees = randomYawDegreeTable[i];
-        float cosDegrees = cosf(yawDegrees* DEGREES_TO_RADIANS);
-        float sinDegrees = sinf(yawDegrees* DEGREES_TO_RADIANS);
-        PROFILER_EXIT("Cos and Sin Compute");
-        if (cosDegrees + sinDegrees > biggestSoFar) {
-            biggestSoFar = cosDegrees + sinDegrees;
-        }
-    }
-    PROFILER_EXIT("Total Cos and Sin Compute");
-    PROFILER_EXIT("Trig Speed Test");
-    std::cout << "Biggest cos+sin = " << biggestSoFar << std::endl;
-
+    return arr;
 }
-void test2(){
 
-    PROFILER_ENTER("Trig Speed Test");
-    constexpr int TRIG_TEST_NUM_ENTRIES =100'000;
-    float randomYawDegreeTable[TRIG_TEST_NUM_ENTRIES] = {};  
-
-    PROFILER_ENTER("Random Angle Generation");
-    for (int i = 0; i < TRIG_TEST_NUM_ENTRIES; i++) {
-        randomYawDegreeTable[i] = 360.f * float(rand()) / float(RAND_MAX);
-    }
-    //profiler->ExitSection("Random Angle Generation");
-    //profiler->ExitSection("Random Angle Generation", __LINE__, __FILE__, __FUNCTION__);
-    PROFILER_EXIT("Random Angle Generation");
-    float biggestSoFar = 0.f;
-
-    PROFILER_ENTER("Total Cos and Sin Compute");
-    for (int i=0; i < TRIG_TEST_NUM_ENTRIES; i++) {
-        PROFILER_ENTER("Cos and Sin Compute");
-        float yawDegrees = randomYawDegreeTable[i];
-        float cosDegrees = cosf(yawDegrees* DEGREES_TO_RADIANS);
-        float sinDegrees = sinf(yawDegrees* DEGREES_TO_RADIANS);
-        PROFILER_EXIT("Cos and Sin Compute");
-        if (cosDegrees + sinDegrees > biggestSoFar) {
-            biggestSoFar = cosDegrees + sinDegrees;
-        }
-    }
-    PROFILER_EXIT("Total Cos and Sin Compute");
-    PROFILER_EXIT("Trig Speed Test");
-    std::cout << "Biggest cos+sin = " << biggestSoFar << std::endl;
-
-};
-
-void test3(){
-    ProfilerScopeObject myObject("Trig Speed Test");
-    //PROFILER_ENTER("Trig Speed Test");
-    constexpr int TRIG_TEST_NUM_ENTRIES =100'000;
-    float randomYawDegreeTable[TRIG_TEST_NUM_ENTRIES] = {};  
-
-    //PROFILER_ENTER("Random Angle Generation");
-    for (int i = 0; i < TRIG_TEST_NUM_ENTRIES; i++) {
-        randomYawDegreeTable[i] = 360.f * float(rand()) / float(RAND_MAX);
-    }
-    //profiler->ExitSection("Random Angle Generation");
-    //profiler->ExitSection("Random Angle Generation", __LINE__, __FILE__, __FUNCTION__);
-    //PROFILER_EXIT("Random Angle Generation");
-    float biggestSoFar = 0.f;
-
-   // PROFILER_ENTER("Total Cos and Sin Compute");
-    for (int i=0; i < TRIG_TEST_NUM_ENTRIES; i++) {
-     //   PROFILER_ENTER("Cos and Sin Compute");
-        float yawDegrees = randomYawDegreeTable[i];
-        float cosDegrees = cosf(yawDegrees* DEGREES_TO_RADIANS);
-        float sinDegrees = sinf(yawDegrees* DEGREES_TO_RADIANS);
-    //    PROFILER_EXIT("Cos and Sin Compute");
-        if (cosDegrees + sinDegrees > biggestSoFar) {
-            biggestSoFar = cosDegrees + sinDegrees;
-        }
-    }
-    // PROFILER_EXIT("Total Cos and Sin Compute");
-    // PROFILER_EXIT("Trig Speed Test");
-    std::cout << "Biggest cos+sin = " << biggestSoFar << std::endl;
-}
-void testInterleaving() {
-    PROFILER_ENTER("Main Task");
-    constexpr int NUM_ITERATIONS = 50;  // You can change the iteration count as needed
-    float result = 0.0f;
-
-    // Start Subtask 1
-    PROFILER_ENTER("Subtask 1");
-    for (int i = 0; i < NUM_ITERATIONS; ++i) {
-        result += static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-    }
-    // Instead of ending Subtask 1 here, we interleave with another task
+void insertionSort(std::vector<int>& arr) {
+    PROFILER_ENTER("Baseline Insertion Sort");
+    int n = arr.size();
     
-    // Start Subtask 2 before Subtask 1 finishes
-    PROFILER_ENTER("Subtask 2");
-    for (int i = 0; i < NUM_ITERATIONS; ++i) {
-        result += static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * 2.0f;
+    PROFILER_ENTER("Array Traversal");
+    for (int i = 1; i < n; i++) {
+        PROFILER_ENTER("Single Element Insertion");
+        int key = arr[i];
+        int j = i - 1;
+        
+        PROFILER_ENTER("Element Shifting");
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+        PROFILER_EXIT("Element Shifting");
+        
+        PROFILER_EXIT("Single Element Insertion");
     }
-    // Now finish Subtask 1
-    PROFILER_EXIT("Subtask 1");
+    PROFILER_EXIT("Array Traversal");
+    
+    PROFILER_EXIT("Baseline Insertion Sort");
+}
 
-    // Continue Subtask 2 after Subtask 1 has finished
-    for (int i = 0; i < NUM_ITERATIONS / 2; ++i) {
-        result += static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * 1.5f;
+void insertionSortOptimized1(std::vector<int>& arr) {
+    PROFILER_ENTER("Optimized Insertion Sort - Shifting");
+    int n = arr.size();
+    
+    PROFILER_ENTER("Array Processing");
+    for (int i = 1; i < n; i++) {
+        PROFILER_ENTER("Element Processing");
+        int key = arr[i];
+        int j = i - 1;
+        
+        PROFILER_ENTER("Shift Operation");
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        PROFILER_EXIT("Shift Operation");
+        
+        PROFILER_ENTER("Key Placement");
+        arr[j + 1] = key;
+        PROFILER_EXIT("Key Placement");
+        
+        PROFILER_EXIT("Element Processing");
     }
-    PROFILER_EXIT("Subtask 2");
-
-    // End the Main Task
-    PROFILER_EXIT("Main Task");
-
-    // Print out a simple result from the calculation
-    std::cout << "Interleaving result: " << result << std::endl;
+    PROFILER_EXIT("Array Processing");
+    
+    PROFILER_EXIT("Optimized Insertion Sort - Shifting");
 }
 
-void runTest() {
-    test1();
-    //test2();
-    //test3();
+int binarySearch(const std::vector<int>& arr, int item, int low, int high) {
+    PROFILER_ENTER("Binary Search Operation");
+    int result = low;
+    
+    PROFILER_ENTER("Search Loop");
+    while (low <= high) {
+        int mid = (low + high) / 2;
+        if (item == arr[mid]) {
+            result = mid + 1;
+            break;
+        }
+        else if (item > arr[mid]) {
+            low = mid + 1;
+        }
+        else {
+            high = mid - 1;
+        }
+    }
+    PROFILER_EXIT("Search Loop");
+    
+    if (result == low) {
+        result = low;
+    }
+    
+    PROFILER_EXIT("Binary Search Operation");
+    return result;
 }
 
-void testHierarchicalProfiling() {
-    // Enter nested sections A, B, C
-    PROFILER_ENTER("Section A");
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));  // Simulate work in A
-
-    PROFILER_ENTER("Section B");
-    std::this_thread::sleep_for(std::chrono::milliseconds(150));  // Simulate work in B
-
-    PROFILER_ENTER("Section C");
-    std::this_thread::sleep_for(std::chrono::milliseconds(200));  // Simulate work in C
-
-    // Leave sections in reverse order
-    PROFILER_EXIT("Section C");  // Exiting C
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));  // Simulate more work in B
-
-    PROFILER_EXIT("Section B");  // Exiting B
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));  // Simulate more work in A
-
-    PROFILER_EXIT("Section A");  // Exiting A
-
-    std::cout << "Hierarchical profiling test completed." << std::endl;
+void insertionSortOptimized2(std::vector<int>& arr) {
+    PROFILER_ENTER("Optimized Insertion Sort - Binary Search");
+    int n = arr.size();
+    
+    PROFILER_ENTER("Main Sort Loop");
+    for (int i = 1; i < n; i++) {
+        PROFILER_ENTER("Single Pass");
+        int key = arr[i];
+        int j = i - 1;
+        
+        PROFILER_ENTER("Position Search");
+        int loc = binarySearch(arr, key, 0, j);
+        PROFILER_EXIT("Position Search");
+        
+        PROFILER_ENTER("Array Shifting");
+        while (j >= loc) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        PROFILER_EXIT("Array Shifting");
+        
+        arr[loc] = key;
+        PROFILER_EXIT("Single Pass");
+    }
+    PROFILER_EXIT("Main Sort Loop");
+    
+    PROFILER_EXIT("Optimized Insertion Sort - Binary Search");
 }
 
-void testInterleavedProfiling() {
-    // Enter interleaved sections A and B
-    PROFILER_ENTER("Section A");
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));  // Simulate work in A
-
-    PROFILER_ENTER("Section B");
-    std::this_thread::sleep_for(std::chrono::milliseconds(150));  // Simulate work in B
-
-    // Interleave the exits: Leave A before B
-    PROFILER_EXIT("Section A");  // Exiting A before B
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));  // Simulate more work in B
-
-    PROFILER_EXIT("Section B");  // Exiting B after A
-
-    std::cout << "Interleaved profiling test completed." << std::endl;
+void insertionSortOptimized3(std::vector<int>& arr) {
+    PROFILER_ENTER("Optimized Insertion Sort - Early Exit");
+    int n = arr.size();
+    bool sorted = true;
+    
+    PROFILER_ENTER("Sorting Process");
+    for (int i = 1; i < n; i++) {
+        PROFILER_ENTER("Element Insertion");
+        int key = arr[i];
+        int j = i - 1;
+        
+        sorted = true;
+        PROFILER_ENTER("Comparison and Shift");
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+            sorted = false;
+        }
+        PROFILER_EXIT("Comparison and Shift");
+        
+        arr[j + 1] = key;
+        PROFILER_EXIT("Element Insertion");
+        
+        if (sorted) {
+            PROFILER_ENTER("Early Exit Check");
+            PROFILER_EXIT("Early Exit Check");
+            break;
+        }
+    }
+    PROFILER_EXIT("Sorting Process");
+    
+    PROFILER_EXIT("Optimized Insertion Sort - Early Exit");
 }
+
+void runTest(vector<int> arrCopy1, vector <int> arrCopy2, vector <int> arrCopy3, vector <int> arrCopy4 ) {
+    // Profile Baseline Insertion Sort
+    insertionSort(arrCopy1);
+    
+    // Profile Optimized Insertion Sort - Shifting
+    insertionSortOptimized1(arrCopy2);
+
+    // Profile Optimized Insertion Sort - Binary Search
+    insertionSortOptimized2(arrCopy3);
+
+    // Profile Optimized Insertion Sort - Early Exit
+    insertionSortOptimized3(arrCopy4);
+
+}
+
 
 int main() {
+    // Seed for random number generation
+    srand(time(0));
+
+    // Generate a large random array of size 10000
+    std::vector<int> arr = generateRandomArray(10000);
+
+    // Make copies of the array for each sort to compare
+    std::vector<int> arrCopy1 = arr;
+    std::vector<int> arrCopy2 = arr;
+    std::vector<int> arrCopy3 = arr;
+    std::vector<int> arrCopy4 = arr;
+
     profiler = Profiler::GetInstance();
-    //testInterleaving();
-    testHierarchicalProfiling();
-    testInterleavedProfiling();
-    runTest();
+
+    runTest(arrCopy1, arrCopy2, arrCopy3, arrCopy4);
     profiler->calculateStats();  // Aggregate the statistics
+    //profiler->printStats();
     profiler->printStatsToCSV("./data/profile_stats.csv");
     profiler->printStatsToJSON("./data/profile_stats.json");
 

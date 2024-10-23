@@ -96,7 +96,7 @@ function updateDetailChart(metric) {
     });
 }
 
-fetch('./profile_stats.json')  // Adjusted to go up one directory to find the Data folder
+fetch('../Data/profile_stats.json')  // Adjusted to go up one directory to find the Data folder
     .then(response => response.json())
     .then(json => {
         profilerData = json;  // Directly use the parsed JSON data
