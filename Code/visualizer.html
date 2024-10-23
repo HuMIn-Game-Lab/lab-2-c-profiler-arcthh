@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profiler Metrics Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        select, input {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f8f9fa;
+            cursor: pointer;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .tooltip {
+            position: absolute;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 5px;
+            border-radius: 4px;
+            font-size: 12px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <select id="metricSelect">
+            <option value="Total Time">Total Time</option>
+            <option value="Avg Time">Average Time</option>
+            <option value="Max Time">Max Time</option>
+            <option value="Min Time">Min Time</option>
+            <option value="Call Count">Call Count</option>
+        </select>
+        <select id="functionFilter">
+            <option value="">All Functions</option>
+        </select>
+        <input type="text" id="searchInput" placeholder="Search sections...">
+    </div>
+
+    <div class="dashboard">
+        <div class="chart-container">
+            <canvas id="barChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="timelineChart"></canvas>
+        </div>
+    </div>
+
+    <table id="metricsTable">
+        <thead>
+            <tr>
+                <th>Section Name</th>
+                <th>Function Name</th>
+                <th>Call Count</th>
+                <th>Total Time</th>
+                <th>Avg Time</th>
+                <th>Min Time</th>
+                <th>Max Time</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <div class="tooltip" id="tooltip"></div>
+
+    <script>
+        // Sample data
+        const data = [
+            {
+                "Section Name": "Trig Speed Test",
+                "Call Count": 1,
+                "Total Time": 0.168716,
+                "Min Time": 0.168716,
+                "Max Time": 0.168716,
+                "Avg Time": 0.168716,
+                "File Name": "./Code/main.cpp",
+                "Function Name": "test1",
+                "Line Number": 41
+            },
+            // ... (rest of the data)
+        ];
+
+        let barChart, timelineChart;
+
+        function initializeCharts() {
+            // Bar Chart
+            const barCtx = document.getElementById('barChart').getContext('2d');
+            barChart = new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Total Time',
+                        data: [],
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Section Metrics'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Timeline Chart
+            const timelineCtx = document.getElementById('timelineChart').getContext('2d');
+            timelineChart = new Chart(timelineCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Execution Timeline',
+                        data: [],
+                        fill: false,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Execution Timeline'
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateCharts(filteredData, metric) {
+            // Update Bar Chart
+            barChart.data.labels = filteredData.map(d => d['Section Name']);
+            barChart.data.datasets[0].data = filteredData.map(d => d[metric]);
+            barChart.data.datasets[0].label = metric;
+            barChart.update();
+
+            // Update Timeline Chart
+            timelineChart.data.labels = filteredData.map(d => d['Section Name']);
+            timelineChart.data.datasets[0].data = filteredData.map(d => d['Total Time']);
+            timelineChart.update();
+        }
+
+        function updateTable(filteredData) {
+            const tbody = document.querySelector('#metricsTable tbody');
+            tbody.innerHTML = '';
+            
+            filteredData.forEach(d => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${d['Section Name']}</td>
+                    <td>${d['Function Name']}</td>
+                    <td>${d['Call Count']}</td>
+                    <td>${d['Total Time'].toFixed(6)}</td>
+                    <td>${d['Avg Time'].toFixed(6)}</td>
+                    <td>${d['Min Time'].toFixed(6)}</td>
+                    <td>${d['Max Time'].toFixed(6)}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function initializeFilters() {
+            const functionSelect = document.getElementById('functionFilter');
+            const functions = [...new Set(data.map(d => d['Function Name']))];
+            functions.forEach(f => {
+                const option = document.createElement('option');
+                option.value = f;
+                option.textContent = f;
+                functionSelect.appendChild(option);
+            });
+        }
+
+        function filterData() {
+            const metric = document.getElementById('metricSelect').value;
+            const functionFilter = document.getElementById('functionFilter').value;
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+            let filteredData = data.filter(d => {
+                const matchesFunction = !functionFilter || d['Function Name'] === functionFilter;
+                const matchesSearch = !searchTerm || 
+                    d['Section Name'].toLowerCase().includes(searchTerm) ||
+                    d['Function Name'].toLowerCase().includes(searchTerm);
+                return matchesFunction && matchesSearch;
+            });
+
+            updateCharts(filteredData, metric);
+            updateTable(filteredData);
+        }
+
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeCharts();
+            initializeFilters();
+            filterData();
+
+            // Add event listeners
+            document.getElementById('metricSelect').addEventListener('change', filterData);
+            document.getElementById('functionFilter').addEventListener('change', filterData);
+            document.getElementById('searchInput').addEventListener('input', filterData);
+
+            // Add sorting functionality to table headers
+            document.querySelectorAll('th').forEach(header => {
+                header.addEventListener('click', () => {
+                    const column = header.textContent;
+                    data.sort((a, b) => {
+                        if (typeof a[column] === 'number') {
+                            return b[column] - a[column];
+                        }
+                        return a[column].localeCompare(b[column]);
+                    });
+                    filterData();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
