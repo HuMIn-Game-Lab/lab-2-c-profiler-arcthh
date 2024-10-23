@@ -190,8 +190,8 @@ int main() {
     testInterleavedProfiling();
     runTest();
     profiler->calculateStats();  // Aggregate the statistics
-    profiler->printStatsToCSV("profile_stats.csv");
-    profiler->printStatsToJSON("profile_stats.json");
+    profiler->printStatsToCSV("./data/profile_stats.csv");
+    profiler->printStatsToJSON("./data/profile_stats.json");
 
     delete profiler;
     profiler = nullptr;
