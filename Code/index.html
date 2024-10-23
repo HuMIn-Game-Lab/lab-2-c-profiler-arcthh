@@ -3,64 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <title>Sorting Algorithm Analysis</title>
+    <!-- Include Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
     <style>
-        /* Keep your existing styles */
+        /* Set global font */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        /* General chart container styling */
         .chart-container {
             width: 80%;
             margin: 20px auto;
             padding: 20px;
             background: white;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
+        
         .canvas-holder {
             height: 400px;
         }
-        .stats-panel {
+        
+        .stats-panel, .percent-change {
+            background-color: #f0f0f0;
+            padding: 20px;
             margin-top: 20px;
-            padding: 15px;
-            background: #f5f5f5;
-            border-radius: 4px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+        
+        /* Styling for performance analysis text */
+        .stats-panel h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .stats-panel p {
+            font-size: 1.2em;
+            margin: 5px 0;
+            line-height: 1.6;
+            color: #555;
+        }
+        
         .fastest {
             color: #4CAF50;
             font-weight: bold;
         }
+        
         .slowest {
             color: #f44336;
             font-weight: bold;
         }
-        .percent-change {
-            font-weight: bold;
+        
+        /* Styling for percentage change boxes */
+        .percent-change p {
+            font-size: 1.2em;
             margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #e9ecef;
         }
+        
         .percent-increase {
             color: red;
+            font-weight: 700;
+            background-color: #ffecec;
         }
+        
         .percent-decrease {
             color: green;
+            font-weight: 700;
+            background-color: #ecffec;
         }
+        
         /* Add new styles */
         .section-controls {
             margin: 20px auto;
             width: 80%;
         }
+        
         select {
-            padding: 8px;
+            padding: 10px;
             font-size: 16px;
             border-radius: 4px;
             border: 1px solid #ddd;
-            width: 200px;
+            width: 250px;
         }
+        
         h2 {
             color: #333;
             margin-bottom: 20px;
+            font-weight: 500;
         }
     </style>
 </head>
 <body>
-    <!-- Keep your existing chart container -->
+
+    <!-- Sorting Algorithm Performance Comparison -->
     <div class="chart-container">
         <h2>Sorting Algorithm Performance Comparison</h2>
         <div class="canvas-holder">
@@ -71,7 +117,7 @@
         </div>
     </div>
 
-    <!-- Add new section for detailed metrics -->
+    <!-- Section Analysis by Function -->
     <div class="section-controls">
         <h2>Section Analysis by Function</h2>
         <select id="functionSelect" onchange="updateSectionChart()">
@@ -85,7 +131,7 @@
         </div>
     </div>
 
-    <!-- Add new section for Performance Improvement Trend -->
+    <!-- Performance Improvement Trend -->
     <div class="chart-container">
         <h2>Performance Improvement Trend</h2>
         <div class="canvas-holder">
@@ -131,7 +177,6 @@
 
         // Modify createSortingChart function to only include overall runtime
         function createSortingChart(data) {
-            // Filter data to only include overall algorithm timings
             const overallSorts = data.filter(row => {
                 const name = row['Section Name'];
                 return name === 'Baseline Insertion Sort' ||
@@ -213,7 +258,6 @@
 
         // Function to create the Performance Improvement Trend chart
         function createTrendChart(data) {
-            // Filter data to only include overall algorithm timings
             const trendData = data.filter(row => {
                 const name = row['Section Name'];
                 return name === 'Baseline Insertion Sort' ||
@@ -222,14 +266,12 @@
                        name === 'Optimized Insertion Sort4 - Early Exit';
             });
 
-            // Sort by the order of algorithms
             const labels = ['Baseline Insertion Sort', 'Optimized Insertion Sort2 - Shifting', 'Optimized Insertion Sort3 - Binary Search', 'Optimized Insertion Sort4 - Early Exit'];
             const times = labels.map(label => {
                 const entry = trendData.find(row => row['Section Name'] === label);
                 return entry ? entry['Total Time'] : null;
             });
 
-            // Calculate percent changes between versions
             let percentChanges = [];
             for (let i = 1; i < times.length; i++) {
                 if (times[i] !== null && times[i - 1] !== null) {
@@ -240,7 +282,6 @@
                 }
             }
 
-            // Create the trend line chart
             const ctx = document.getElementById('trendChart').getContext('2d');
             trendChart = new Chart(ctx, {
                 type: 'line',
@@ -279,7 +320,6 @@
                 }
             });
 
-            // Display percent changes with green/red bold text
             const percentChangeHtml = percentChanges.map((change, index) => {
                 if (change !== null) {
                     const className = change < 0 ? 'percent-decrease' : 'percent-increase';
