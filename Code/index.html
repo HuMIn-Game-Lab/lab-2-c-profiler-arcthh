@@ -3,25 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profiler Visualization Tool</title>
+    <title>Code Profiler Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-    <h1>Profiler Output Visualizations</h1>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-8 text-center">Code Profiler Dashboard</h1>
+        
+        <!-- Controls -->
+        <div class="bg-white p-4 rounded-lg shadow mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Sort By</label>
+                    <select id="sortSelect" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <option value="name">Section Name</option>
+                        <option value="time">Total Time</option>
+                        <option value="calls">Call Count</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Filter Function</label>
+                    <select id="functionFilter" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <option value="all">All Functions</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">View Type</label>
+                    <select id="viewSelect" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <option value="performance">Performance View</option>
+                        <option value="hierarchy">Hierarchy View</option>
+                    </select>
+                </div>
+            </div>
+        </div>
 
-    <!-- Bar chart for average times -->
-    <div id="avg-time-bar-chart">
-        <h2>Average Time Per Section (Bar Chart)</h2>
-        <svg id="barChart" width="800" height="400"></svg>
+        <!-- Charts Container -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Performance Bar Chart -->
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h2 class="text-xl font-semibold mb-4">Performance Metrics</h2>
+                <div id="barChart" class="w-full h-96"></div>
+            </div>
+
+            <!-- Flame Graph -->
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h2 class="text-xl font-semibold mb-4">Call Hierarchy</h2>
+                <div id="flameGraph" class="w-full h-96"></div>
+            </div>
+
+            <!-- Timeline View -->
+            <div class="bg-white p-4 rounded-lg shadow col-span-1 lg:col-span-2">
+                <h2 class="text-xl font-semibold mb-4">Timeline View</h2>
+                <div id="timelineChart" class="w-full h-64"></div>
+            </div>
+        </div>
+
+        <!-- Details Table -->
+        <div class="bg-white p-4 rounded-lg shadow mt-8">
+            <h2 class="text-xl font-semibold mb-4">Detailed Statistics</h2>
+            <div class="overflow-x-auto">
+                <table id="statsTable" class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Section</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Calls</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Time</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Avg Time</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Function</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-
-    <!-- Timeline chart for nested calls -->
-    <div id="timeline-chart">
-        <h2>Timeline of Section Calls (Timeline Chart)</h2>
-        <svg id="timeline" width="800" height="400"></svg>
-    </div>
-
-    <script src="https://d3js.org/d3.v6.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
