@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Sorting Algorithm Comparison</title>
+    <title>Sorting Algorithm Analysis</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
     <style>
+        /* Keep your existing styles */
         .chart-container {
             width: 80%;
             margin: 20px auto;
@@ -30,9 +31,26 @@
             color: #f44336;
             font-weight: bold;
         }
+        /* Add new styles */
+        .section-controls {
+            margin: 20px auto;
+            width: 80%;
+        }
+        select {
+            padding: 8px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            width: 200px;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
+    <!-- Keep your existing chart container -->
     <div class="chart-container">
         <h2>Sorting Algorithm Performance Comparison</h2>
         <div class="canvas-holder">
@@ -43,15 +61,34 @@
         </div>
     </div>
 
+    <!-- Add new section for detailed metrics -->
+    <div class="section-controls">
+        <h2>Section Analysis by Function</h2>
+        <select id="functionSelect" onchange="updateSectionChart()">
+            <option value="">Select a Function</option>
+        </select>
+    </div>
+    <div class="chart-container">
+        <div class="canvas-holder">
+            <canvas id="sectionChart"></canvas>
+        </div>
+    </div>
+
     <script>
+        // Keep your existing global variables and add new ones
+        let globalData = null;
+        let sectionChart = null;
+
         fetch('../Data/profile_stats.csv')
             .then(response => response.text())
             .then(csv => {
-                const data = parseCSV(csv);
-                createSortingChart(data);
+                globalData = parseCSV(csv);
+                createSortingChart(globalData);
+                populateFunctionSelect(globalData);
             })
             .catch(error => console.error('Error:', error));
 
+        // Keep your existing parseCSV function
         function parseCSV(csv) {
             const lines = csv.trim().split('\n');
             const headers = lines[0].split(',').map(h => h.trim());
@@ -69,8 +106,10 @@
             });
         }
 
+        // Keep your existing createSortingChart function
         function createSortingChart(data) {
-            // Filter only the main sorting algorithms
+            // Your existing chart creation code...
+            // [Previous implementation remains exactly the same]
             const mainSorts = data.filter(row => {
                 const name = row['Section Name'];
                 return name.includes('Insertion Sort') && 
@@ -78,24 +117,20 @@
                        !name.includes('Array');
             });
 
-            // Sort algorithms by execution time
             mainSorts.sort((a, b) => a['Total Time'] - b['Total Time']);
 
-            // Prepare data for chart
             const labels = mainSorts.map(row => {
-                // Clean up the section names for better display
                 return row['Section Name']
                     .replace('Optimized Insertion Sort - ', 'Optimized - ')
                     .replace('Baseline Insertion Sort', 'Baseline');
             });
             const times = mainSorts.map(row => row['Total Time']);
 
-            // Colors for different algorithms
             const colors = [
-                'rgba(75, 192, 192, 0.7)',   // Teal
-                'rgba(54, 162, 235, 0.7)',   // Blue
-                'rgba(255, 99, 132, 0.7)',   // Pink
-                'rgba(255, 206, 86, 0.7)'    // Yellow
+                'rgba(75, 192, 192, 0.7)',
+                'rgba(54, 162, 235, 0.7)',
+                'rgba(255, 99, 132, 0.7)',
+                'rgba(255, 206, 86, 0.7)'
             ];
 
             const ctx = document.getElementById('sortingChart').getContext('2d');
@@ -114,7 +149,7 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    indexAxis: 'y',  // Make it a horizontal bar chart
+                    indexAxis: 'y',
                     plugins: {
                         legend: {
                             display: false
@@ -139,7 +174,6 @@
                 }
             });
 
-            // Display performance statistics
             const fastest = mainSorts[0];
             const slowest = mainSorts[mainSorts.length - 1];
             const speedup = slowest['Total Time'] / fastest['Total Time'];
@@ -153,6 +187,74 @@
             `;
 
             document.getElementById('statsPanel').innerHTML = statsHtml;
+        }
+
+        // Add new functions for section analysis
+        function populateFunctionSelect(data) {
+            const functionNames = [...new Set(data.map(row => row['Function Name']))];
+            const select = document.getElementById('functionSelect');
+            functionNames.forEach(func => {
+                const option = document.createElement('option');
+                option.value = func;
+                option.textContent = func;
+                select.appendChild(option);
+            });
+        }
+
+        function updateSectionChart() {
+            const selectedFunction = document.getElementById('functionSelect').value;
+            if (!selectedFunction) return;
+
+            // Filter data for selected function
+            const functionData = globalData.filter(row => row['Function Name'] === selectedFunction);
+            
+            // Destroy existing chart if it exists
+            if (sectionChart) {
+                sectionChart.destroy();
+            }
+
+            // Create new section chart
+            const ctx = document.getElementById('sectionChart').getContext('2d');
+            sectionChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: functionData.map(row => row['Section Name']),
+                    datasets: [{
+                        label: 'Average Time (seconds)',
+                        data: functionData.map(row => row['Avg Time']),
+                        backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const row = functionData[context.dataIndex];
+                                    return [
+                                        `Average Time: ${row['Avg Time'].toFixed(6)} seconds`,
+                                        `Total Time: ${row['Total Time'].toFixed(6)} seconds`,
+                                        `Calls: ${row['Call Count']}`
+                                    ];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Average Time (seconds)'
+                            }
+                        }
+                    }
+                }
+            });
         }
     </script>
 </body>
