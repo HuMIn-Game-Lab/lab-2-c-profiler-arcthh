@@ -55,64 +55,63 @@ std::vector<int> generateRandomArray(int size) {
     return arr;
 }
 
-void insertionSort(std::vector<int>& arr) {
+void baselineInsertionSort(std::vector<int>& arr) {
     PROFILER_ENTER("Baseline Insertion Sort");
     int n = arr.size();
     
-    PROFILER_ENTER("Array Traversal");
+    PROFILER_ENTER("Insertion Sort1: Outer Loop");
     for (int i = 1; i < n; i++) {
-        PROFILER_ENTER("Single Element Insertion");
+        PROFILER_ENTER("Insertion Sort1: Key Selection");
         int key = arr[i];
         int j = i - 1;
         
-        PROFILER_ENTER("Element Shifting");
+        PROFILER_ENTER("Insertion Sort1: Element Shifting");
         while (j >= 0 && arr[j] > key) {
             arr[j + 1] = arr[j];
             j--;
         }
         arr[j + 1] = key;
-        PROFILER_EXIT("Element Shifting");
+        PROFILER_EXIT("Insertion Sort1: Element Shifting");
         
-        PROFILER_EXIT("Single Element Insertion");
+        PROFILER_EXIT("Insertion Sort1: Key Selection");
     }
-    PROFILER_EXIT("Array Traversal");
-    
+    PROFILER_EXIT("Insertion Sort1: Outer Loop");    
     PROFILER_EXIT("Baseline Insertion Sort");
 }
 
-void insertionSortOptimized1(std::vector<int>& arr) {
-    PROFILER_ENTER("Optimized Insertion Sort - Shifting");
+void insertionSortShifting2(std::vector<int>& arr) {
+    PROFILER_ENTER("Optimized Insertion Sort2 - Shifting");
     int n = arr.size();
     
-    PROFILER_ENTER("Array Processing");
+    PROFILER_ENTER("Insertion Sort2: Outer Loop");
     for (int i = 1; i < n; i++) {
-        PROFILER_ENTER("Element Processing");
+        PROFILER_ENTER("Insertion Sort2: Key Selection");
         int key = arr[i];
         int j = i - 1;
         
-        PROFILER_ENTER("Shift Operation");
+        PROFILER_ENTER("Insertion Sort2: Element Shifting");
         while (j >= 0 && arr[j] > key) {
             arr[j + 1] = arr[j];
             j--;
         }
-        PROFILER_EXIT("Shift Operation");
+        PROFILER_EXIT("Insertion Sort2: Element Shifting");
         
-        PROFILER_ENTER("Key Placement");
+        PROFILER_ENTER("Insertion Sort2: Key Placement");
         arr[j + 1] = key;
-        PROFILER_EXIT("Key Placement");
+        PROFILER_EXIT("Insertion Sort2: Key Placement");
         
-        PROFILER_EXIT("Element Processing");
+        PROFILER_EXIT("Insertion Sort2: Key Selection");
     }
-    PROFILER_EXIT("Array Processing");
+    PROFILER_EXIT("Insertion Sort2: Outer Loop");
     
-    PROFILER_EXIT("Optimized Insertion Sort - Shifting");
+    PROFILER_EXIT("Optimized Insertion Sort2 - Shifting");
 }
 
 int binarySearch(const std::vector<int>& arr, int item, int low, int high) {
-    PROFILER_ENTER("Binary Search Operation");
+    //PROFILER_ENTER("Binary Search Operation");
     int result = low;
     
-    PROFILER_ENTER("Search Loop");
+    //PROFILER_ENTER("Search Loop");
     while (low <= high) {
         int mid = (low + high) / 2;
         if (item == arr[mid]) {
@@ -126,91 +125,91 @@ int binarySearch(const std::vector<int>& arr, int item, int low, int high) {
             high = mid - 1;
         }
     }
-    PROFILER_EXIT("Search Loop");
+    //PROFILER_EXIT("Search Loop");
     
     if (result == low) {
         result = low;
     }
     
-    PROFILER_EXIT("Binary Search Operation");
+    //PROFILER_EXIT("Binary Search Operation");
     return result;
 }
 
-void insertionSortOptimized2(std::vector<int>& arr) {
-    PROFILER_ENTER("Optimized Insertion Sort - Binary Search");
+void insertionSortBinary3(std::vector<int>& arr) {
+    PROFILER_ENTER("Optimized Insertion Sort3 - Binary Search");
     int n = arr.size();
     
-    PROFILER_ENTER("Main Sort Loop");
+    PROFILER_ENTER("Insertion Sort3: Outer Loop");
     for (int i = 1; i < n; i++) {
-        PROFILER_ENTER("Single Pass");
+        PROFILER_ENTER("Insertion Sort3: Key Selection");
         int key = arr[i];
         int j = i - 1;
         
-        PROFILER_ENTER("Position Search");
+        PROFILER_ENTER("Insertion Sort3: Binary Search");
         int loc = binarySearch(arr, key, 0, j);
-        PROFILER_EXIT("Position Search");
+        PROFILER_EXIT("Insertion Sort3: Binary Search");
         
-        PROFILER_ENTER("Array Shifting");
+        PROFILER_ENTER("Insertion Sort3: Element Shifting");
         while (j >= loc) {
             arr[j + 1] = arr[j];
             j--;
         }
-        PROFILER_EXIT("Array Shifting");
+        PROFILER_EXIT("Insertion Sort3: Element Shifting");
         
         arr[loc] = key;
-        PROFILER_EXIT("Single Pass");
+        PROFILER_EXIT("Insertion Sort3: Key Selection");
     }
-    PROFILER_EXIT("Main Sort Loop");
+    PROFILER_EXIT("Insertion Sort3: Outer Loop");
     
-    PROFILER_EXIT("Optimized Insertion Sort - Binary Search");
+    PROFILER_EXIT("Optimized Insertion Sort3 - Binary Search");
 }
 
-void insertionSortOptimized3(std::vector<int>& arr) {
-    PROFILER_ENTER("Optimized Insertion Sort - Early Exit");
+void insertionSortEarlyExit4(std::vector<int>& arr) {
+    PROFILER_ENTER("Optimized Insertion Sort4 - Early Exit");
     int n = arr.size();
     bool sorted = true;
     
-    PROFILER_ENTER("Sorting Process");
+    PROFILER_ENTER("Insertion Sort4: Outer Loop");
     for (int i = 1; i < n; i++) {
-        PROFILER_ENTER("Element Insertion");
+        PROFILER_ENTER("Insertion Sort4: Key Selection");
         int key = arr[i];
         int j = i - 1;
         
         sorted = true;
-        PROFILER_ENTER("Comparison and Shift");
+        PROFILER_ENTER("Insertion Sort4: Element Shifting");
         while (j >= 0 && arr[j] > key) {
             arr[j + 1] = arr[j];
             j--;
             sorted = false;
         }
-        PROFILER_EXIT("Comparison and Shift");
+        PROFILER_EXIT("Insertion Sort4: Element Shifting");
         
         arr[j + 1] = key;
-        PROFILER_EXIT("Element Insertion");
+        PROFILER_EXIT("Insertion Sort4: Key Selection");
         
         if (sorted) {
-            PROFILER_ENTER("Early Exit Check");
-            PROFILER_EXIT("Early Exit Check");
+            PROFILER_ENTER("Insertion Sort4: Early Exit Check");
+            PROFILER_EXIT("Insertion Sort4: Early Exit Check");
             break;
         }
     }
-    PROFILER_EXIT("Sorting Process");
+    PROFILER_EXIT("Insertion Sort4: Outer Loop");
     
-    PROFILER_EXIT("Optimized Insertion Sort - Early Exit");
+    PROFILER_EXIT("Optimized Insertion Sort4 - Early Exit");
 }
 
 void runTest(vector<int> arrCopy1, vector <int> arrCopy2, vector <int> arrCopy3, vector <int> arrCopy4 ) {
     // Profile Baseline Insertion Sort
-    insertionSort(arrCopy1);
+    baselineInsertionSort(arrCopy1);
     
     // Profile Optimized Insertion Sort - Shifting
-    insertionSortOptimized1(arrCopy2);
+    insertionSortShifting2(arrCopy2);
 
     // Profile Optimized Insertion Sort - Binary Search
-    insertionSortOptimized2(arrCopy3);
+    insertionSortBinary3(arrCopy3);
 
     // Profile Optimized Insertion Sort - Early Exit
-    insertionSortOptimized3(arrCopy4);
+    insertionSortEarlyExit4(arrCopy4);
 
 }
 
@@ -220,8 +219,8 @@ int main() {
     // Seed for random number generation
     srand(time(0));
 
-    // Generate a large random array of size 10000
-    std::vector<int> arr = generateRandomArray(10000);
+    // Generate a large random array of size 5000
+    std::vector<int> arr = generateRandomArray(5000);
 
     // Make copies of the array for each sort to compare
     std::vector<int> arrCopy1 = arr;

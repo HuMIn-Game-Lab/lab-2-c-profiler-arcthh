@@ -31,6 +31,16 @@
             color: #f44336;
             font-weight: bold;
         }
+        .percent-change {
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .percent-increase {
+            color: red;
+        }
+        .percent-decrease {
+            color: green;
+        }
         /* Add new styles */
         .section-controls {
             margin: 20px auto;
@@ -68,16 +78,28 @@
             <option value="">Select a Function</option>
         </select>
     </div>
+
     <div class="chart-container">
         <div class="canvas-holder">
             <canvas id="sectionChart"></canvas>
         </div>
     </div>
 
+    <!-- Add new section for Performance Improvement Trend -->
+    <div class="chart-container">
+        <h2>Performance Improvement Trend</h2>
+        <div class="canvas-holder">
+            <canvas id="trendChart"></canvas>
+        </div>
+        <div id="percentChangePanel" class="percent-change">
+            <!-- Percentage changes will be inserted here -->
+        </div>
+    </div>
+
     <script>
-        // Keep your existing global variables and add new ones
         let globalData = null;
         let sectionChart = null;
+        let trendChart = null;
 
         fetch('../Data/profile_stats.csv')
             .then(response => response.text())
@@ -85,6 +107,7 @@
                 globalData = parseCSV(csv);
                 createSortingChart(globalData);
                 populateFunctionSelect(globalData);
+                createTrendChart(globalData); // Call to create trend chart
             })
             .catch(error => console.error('Error:', error));
 
@@ -106,25 +129,24 @@
             });
         }
 
-        // Keep your existing createSortingChart function
+        // Modify createSortingChart function to only include overall runtime
         function createSortingChart(data) {
-            // Your existing chart creation code...
-            // [Previous implementation remains exactly the same]
-            const mainSorts = data.filter(row => {
+            // Filter data to only include overall algorithm timings
+            const overallSorts = data.filter(row => {
                 const name = row['Section Name'];
-                return name.includes('Insertion Sort') && 
-                       !name.includes('Element') && 
-                       !name.includes('Array');
+                return name === 'Baseline Insertion Sort' ||
+                       name === 'Optimized Insertion Sort2 - Shifting' ||
+                       name === 'Optimized Insertion Sort3 - Binary Search' ||
+                       name === 'Optimized Insertion Sort4 - Early Exit';
             });
 
-            mainSorts.sort((a, b) => a['Total Time'] - b['Total Time']);
+            overallSorts.sort((a, b) => a['Total Time'] - b['Total Time']);
 
-            const labels = mainSorts.map(row => {
-                return row['Section Name']
-                    .replace('Optimized Insertion Sort - ', 'Optimized - ')
-                    .replace('Baseline Insertion Sort', 'Baseline');
-            });
-            const times = mainSorts.map(row => row['Total Time']);
+            const labels = overallSorts.map(row => row['Section Name']
+                .replace('Optimized Insertion Sort - ', 'Optimized - ')
+                .replace('Baseline Insertion Sort', 'Baseline Insertion Sort'));
+
+            const times = overallSorts.map(row => row['Total Time']);
 
             const colors = [
                 'rgba(75, 192, 192, 0.7)',
@@ -174,8 +196,8 @@
                 }
             });
 
-            const fastest = mainSorts[0];
-            const slowest = mainSorts[mainSorts.length - 1];
+            const fastest = overallSorts[0];
+            const slowest = overallSorts[overallSorts.length - 1];
             const speedup = slowest['Total Time'] / fastest['Total Time'];
 
             const statsHtml = `
@@ -183,13 +205,94 @@
                 <p><span class="fastest">Fastest: ${fastest['Section Name']} (${fastest['Total Time'].toFixed(6)} seconds)</span></p>
                 <p><span class="slowest">Slowest: ${slowest['Section Name']} (${slowest['Total Time'].toFixed(6)} seconds)</span></p>
                 <p>Speed Difference: ${speedup.toFixed(2)}x</p>
-                <p>Number of algorithms compared: ${mainSorts.length}</p>
+                <p>Number of algorithms compared: ${overallSorts.length}</p>
             `;
 
             document.getElementById('statsPanel').innerHTML = statsHtml;
         }
 
-        // Add new functions for section analysis
+        // Function to create the Performance Improvement Trend chart
+        function createTrendChart(data) {
+            // Filter data to only include overall algorithm timings
+            const trendData = data.filter(row => {
+                const name = row['Section Name'];
+                return name === 'Baseline Insertion Sort' ||
+                       name === 'Optimized Insertion Sort2 - Shifting' ||
+                       name === 'Optimized Insertion Sort3 - Binary Search' ||
+                       name === 'Optimized Insertion Sort4 - Early Exit';
+            });
+
+            // Sort by the order of algorithms
+            const labels = ['Baseline Insertion Sort', 'Optimized Insertion Sort2 - Shifting', 'Optimized Insertion Sort3 - Binary Search', 'Optimized Insertion Sort4 - Early Exit'];
+            const times = labels.map(label => {
+                const entry = trendData.find(row => row['Section Name'] === label);
+                return entry ? entry['Total Time'] : null;
+            });
+
+            // Calculate percent changes between versions
+            let percentChanges = [];
+            for (let i = 1; i < times.length; i++) {
+                if (times[i] !== null && times[i - 1] !== null) {
+                    const change = ((times[i] - times[i - 1]) / times[i - 1]) * 100;
+                    percentChanges.push(change);
+                } else {
+                    percentChanges.push(null);
+                }
+            }
+
+            // Create the trend line chart
+            const ctx = document.getElementById('trendChart').getContext('2d');
+            trendChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Total Time (seconds)',
+                        data: times,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 2,
+                        fill: true,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Total Time: ${context.raw.toFixed(6)} seconds`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Total Time (seconds)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Display percent changes with green/red bold text
+            const percentChangeHtml = percentChanges.map((change, index) => {
+                if (change !== null) {
+                    const className = change < 0 ? 'percent-decrease' : 'percent-increase';
+                    const direction = change < 0 ? '↓' : '↑';
+                    return `<p class="${className}">${labels[index + 1]}: ${direction} ${Math.abs(change.toFixed(2))}%</p>`;
+                }
+                return '';
+            }).join('');
+
+            document.getElementById('percentChangePanel').innerHTML = percentChangeHtml;
+        }
+
+        // Function to populate the function selection dropdown
         function populateFunctionSelect(data) {
             const functionNames = [...new Set(data.map(row => row['Function Name']))];
             const select = document.getElementById('functionSelect');
@@ -201,31 +304,52 @@
             });
         }
 
+        // Update section chart based on selected function and display all metrics
         function updateSectionChart() {
             const selectedFunction = document.getElementById('functionSelect').value;
             if (!selectedFunction) return;
 
-            // Filter data for selected function
             const functionData = globalData.filter(row => row['Function Name'] === selectedFunction);
-            
-            // Destroy existing chart if it exists
+
             if (sectionChart) {
                 sectionChart.destroy();
             }
 
-            // Create new section chart
             const ctx = document.getElementById('sectionChart').getContext('2d');
             sectionChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: functionData.map(row => row['Section Name']),
-                    datasets: [{
-                        label: 'Average Time (seconds)',
-                        data: functionData.map(row => row['Avg Time']),
-                        backgroundColor: 'rgba(75, 192, 192, 0.7)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
-                    }]
+                    datasets: [
+                        {
+                            label: 'Total Time (seconds)',
+                            data: functionData.map(row => row['Total Time']),
+                            backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Average Time (seconds)',
+                            data: functionData.map(row => row['Avg Time']),
+                            backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Min Time (seconds)',
+                            data: functionData.map(row => row['Min Time']),
+                            backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Max Time (seconds)',
+                            data: functionData.map(row => row['Max Time']),
+                            backgroundColor: 'rgba(255, 206, 86, 0.7)',
+                            borderColor: 'rgba(255, 206, 86, 1)',
+                            borderWidth: 1
+                        }
+                    ]
                 },
                 options: {
                     responsive: true,
@@ -235,11 +359,7 @@
                             callbacks: {
                                 label: function(context) {
                                     const row = functionData[context.dataIndex];
-                                    return [
-                                        `Average Time: ${row['Avg Time'].toFixed(6)} seconds`,
-                                        `Total Time: ${row['Total Time'].toFixed(6)} seconds`,
-                                        `Calls: ${row['Call Count']}`
-                                    ];
+                                    return `${context.dataset.label}: ${context.raw.toFixed(6)} seconds`;
                                 }
                             }
                         }
@@ -249,7 +369,7 @@
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: 'Average Time (seconds)'
+                                text: 'Time (seconds)'
                             }
                         }
                     }

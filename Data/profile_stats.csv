@@ -1,22 +1,20 @@
 Section Name, Call Count, Total Time, Min Time, Max Time, Avg Time, File Name, Function Name, Line Number
-Baseline Insertion Sort, 1, 0.24288, 0.24288, 0.24288, 0.24288, ./Code/main.cpp, insertionSort, 80
-Array Traversal, 1, 0.242868, 0.242868, 0.242868, 0.242868, ./Code/main.cpp, insertionSort, 78
-Single Element Insertion, 9999, 0.238627, 7e-07, 0.000957, 2.38651e-05, ./Code/main.cpp, insertionSort, 76
-Element Shifting, 9999, 0.228944, 2e-07, 0.0009354, 2.28967e-05, ./Code/main.cpp, insertionSort, 74
-Optimized Insertion Sort - Shifting, 1, 0.271727, 0.271727, 0.271727, 0.271727, ./Code/main.cpp, insertionSortOptimized1, 108
-Array Processing, 1, 0.271724, 0.271724, 0.271724, 0.271724, ./Code/main.cpp, insertionSortOptimized1, 106
-Element Processing, 9999, 0.266658, 1.1e-06, 0.0009884, 2.66685e-05, ./Code/main.cpp, insertionSortOptimized1, 104
-Shift Operation, 9999, 0.24688, 2e-07, 0.0007614, 2.46905e-05, ./Code/main.cpp, insertionSortOptimized1, 98
-Key Placement, 9999, 0.0042343, 1e-07, 8.19e-05, 4.23472e-07, ./Code/main.cpp, insertionSortOptimized1, 102
-Binary Search Operation, 9999, 0.113018, 1.9e-06, 0.0015469, 1.13029e-05, ./Code/main.cpp, binarySearch, 135
-Search Loop, 9999, 0.0079872, 2e-07, 0.0002548, 7.988e-07, ./Code/main.cpp, binarySearch, 129
-Optimized Insertion Sort - Binary Search, 1, 0.604066, 0.604066, 0.604066, 0.604066, ./Code/main.cpp, insertionSortOptimized2, 165
-Main Sort Loop, 1, 0.60406, 0.60406, 0.60406, 0.60406, ./Code/main.cpp, insertionSortOptimized2, 163
-Single Pass, 9999, 0.595455, 6e-06, 0.0021567, 5.95514e-05, ./Code/main.cpp, insertionSortOptimized2, 161
-Position Search, 9999, 0.126415, 3.2e-06, 0.0015522, 1.26428e-05, ./Code/main.cpp, insertionSortOptimized2, 151
-Array Shifting, 9999, 0.441661, 2e-07, 0.0021263, 4.41705e-05, ./Code/main.cpp, insertionSortOptimized2, 158
-Optimized Insertion Sort - Early Exit, 1, 2.45e-05, 2.45e-05, 2.45e-05, 2.45e-05, ./Code/main.cpp, insertionSortOptimized3, 199
-Sorting Process, 1, 2.14e-05, 2.14e-05, 2.14e-05, 2.14e-05, ./Code/main.cpp, insertionSortOptimized3, 197
-Element Insertion, 1, 1.46e-05, 1.46e-05, 1.46e-05, 1.46e-05, ./Code/main.cpp, insertionSortOptimized3, 189
-Comparison and Shift, 1, 8e-07, 8e-07, 8e-07, 8e-07, ./Code/main.cpp, insertionSortOptimized3, 186
-Early Exit Check, 1, 7e-07, 7e-07, 7e-07, 7e-07, ./Code/main.cpp, insertionSortOptimized3, 193
+Baseline Insertion Sort, 1, 0.0306082, 0.0306082, 0.0306082, 0.0306082, ./Code/main.cpp, baselineInsertionSort, 79
+Insertion Sort1: Outer Loop, 1, 0.0306018, 0.0306018, 0.0306018, 0.0306018, ./Code/main.cpp, baselineInsertionSort, 78
+Insertion Sort1: Key Selection, 4999, 0.0293987, 5e-07, 0.0001076, 5.88092e-06, ./Code/main.cpp, baselineInsertionSort, 76
+Insertion Sort1: Element Shifting, 4999, 0.0271418, 2e-07, 0.0001044, 5.42945e-06, ./Code/main.cpp, baselineInsertionSort, 74
+Optimized Insertion Sort2 - Shifting, 1, 0.0340932, 0.0340932, 0.0340932, 0.0340932, ./Code/main.cpp, insertionSortShifting2, 107
+Insertion Sort2: Outer Loop, 1, 0.0340901, 0.0340901, 0.0340901, 0.0340901, ./Code/main.cpp, insertionSortShifting2, 105
+Insertion Sort2: Key Selection, 4999, 0.0327352, 1e-06, 0.0001324, 6.54835e-06, ./Code/main.cpp, insertionSortShifting2, 103
+Insertion Sort2: Element Shifting, 4999, 0.027734, 1e-07, 7.04e-05, 5.54791e-06, ./Code/main.cpp, insertionSortShifting2, 97
+Insertion Sort2: Key Placement, 4999, 0.001177, 1e-07, 0.0001037, 2.35447e-07, ./Code/main.cpp, insertionSortShifting2, 101
+Optimized Insertion Sort3 - Binary Search, 1, 0.043665, 0.043665, 0.043665, 0.043665, ./Code/main.cpp, insertionSortBinary3, 164
+Insertion Sort3: Outer Loop, 1, 0.043662, 0.043662, 0.043662, 0.043662, ./Code/main.cpp, insertionSortBinary3, 162
+Insertion Sort3: Key Selection, 4999, 0.0422572, 1.1e-06, 0.0001501, 8.45313e-06, ./Code/main.cpp, insertionSortBinary3, 160
+Insertion Sort3: Binary Search, 4999, 0.0014753, 2e-07, 2.23e-05, 2.95119e-07, ./Code/main.cpp, insertionSortBinary3, 150
+Insertion Sort3: Element Shifting, 4999, 0.0366886, 2e-07, 0.0001459, 7.33919e-06, ./Code/main.cpp, insertionSortBinary3, 157
+Optimized Insertion Sort4 - Early Exit, 1, 0.0001678, 0.0001678, 0.0001678, 0.0001678, ./Code/main.cpp, insertionSortEarlyExit4, 198
+Insertion Sort4: Outer Loop, 1, 0.0001668, 0.0001668, 0.0001668, 0.0001668, ./Code/main.cpp, insertionSortEarlyExit4, 196
+Insertion Sort4: Key Selection, 21, 0.0001457, 1.6e-06, 1.5e-05, 6.9381e-06, ./Code/main.cpp, insertionSortEarlyExit4, 188
+Insertion Sort4: Element Shifting, 21, 1.31e-05, 2e-07, 8.5e-06, 6.2381e-07, ./Code/main.cpp, insertionSortEarlyExit4, 185
+Insertion Sort4: Early Exit Check, 1, 6.2e-06, 6.2e-06, 6.2e-06, 6.2e-06, ./Code/main.cpp, insertionSortEarlyExit4, 192
