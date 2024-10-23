@@ -9,6 +9,8 @@
 
 Profiler* profiler = nullptr;
 
+using namespace std;
+
 // Function to start Python HTTP server
 void startServer() {
     // First kill any existing Python servers
@@ -232,8 +234,9 @@ int main() {
     runTest(arrCopy1, arrCopy2, arrCopy3, arrCopy4);
     profiler->calculateStats();  // Aggregate the statistics
     //profiler->printStats();
-    profiler->printStatsToCSV("./data/profile_stats.csv");
-    profiler->printStatsToJSON("./data/profile_stats.json");
+    // In main.cpp, update these lines to use the correct case
+    profiler->printStatsToCSV("./Data/profile_stats.csv");
+    profiler->printStatsToJSON("./Data/profile_stats.json");
 
     // Open the visualizer in the default browser - index.html
     cout << "Starting local server..." << endl;

@@ -2,84 +2,158 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Code Profiler Dashboard</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <title>Sorting Algorithm Comparison</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <style>
+        .chart-container {
+            width: 80%;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .canvas-holder {
+            height: 400px;
+        }
+        .stats-panel {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 4px;
+        }
+        .fastest {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .slowest {
+            color: #f44336;
+            font-weight: bold;
+        }
+    </style>
 </head>
-<body class="bg-gray-100">
-    <div class="container mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold mb-8 text-center">Code Profiler Dashboard</h1>
-        
-        <!-- Controls -->
-        <div class="bg-white p-4 rounded-lg shadow mb-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Sort By</label>
-                    <select id="sortSelect" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-                        <option value="name">Section Name</option>
-                        <option value="time">Total Time</option>
-                        <option value="calls">Call Count</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Filter Function</label>
-                    <select id="functionFilter" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-                        <option value="all">All Functions</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">View Type</label>
-                    <select id="viewSelect" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-                        <option value="performance">Performance View</option>
-                        <option value="hierarchy">Hierarchy View</option>
-                    </select>
-                </div>
-            </div>
+<body>
+    <div class="chart-container">
+        <h2>Sorting Algorithm Performance Comparison</h2>
+        <div class="canvas-holder">
+            <canvas id="sortingChart"></canvas>
         </div>
-
-        <!-- Charts Container -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <!-- Performance Bar Chart -->
-            <div class="bg-white p-4 rounded-lg shadow">
-                <h2 class="text-xl font-semibold mb-4">Performance Metrics</h2>
-                <div id="barChart" class="w-full h-96"></div>
-            </div>
-
-            <!-- Flame Graph -->
-            <div class="bg-white p-4 rounded-lg shadow">
-                <h2 class="text-xl font-semibold mb-4">Call Hierarchy</h2>
-                <div id="flameGraph" class="w-full h-96"></div>
-            </div>
-
-            <!-- Timeline View -->
-            <div class="bg-white p-4 rounded-lg shadow col-span-1 lg:col-span-2">
-                <h2 class="text-xl font-semibold mb-4">Timeline View</h2>
-                <div id="timelineChart" class="w-full h-64"></div>
-            </div>
-        </div>
-
-        <!-- Details Table -->
-        <div class="bg-white p-4 rounded-lg shadow mt-8">
-            <h2 class="text-xl font-semibold mb-4">Detailed Statistics</h2>
-            <div class="overflow-x-auto">
-                <table id="statsTable" class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Section</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Calls</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Time</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Avg Time</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Function</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                    </tbody>
-                </table>
-            </div>
+        <div class="stats-panel" id="statsPanel">
+            <!-- Performance stats will be inserted here -->
         </div>
     </div>
-    <script src="script.js"></script>
+
+    <script>
+        fetch('../Data/profile_stats.csv')
+            .then(response => response.text())
+            .then(csv => {
+                const data = parseCSV(csv);
+                createSortingChart(data);
+            })
+            .catch(error => console.error('Error:', error));
+
+        function parseCSV(csv) {
+            const lines = csv.trim().split('\n');
+            const headers = lines[0].split(',').map(h => h.trim());
+            
+            return lines.slice(1).map(line => {
+                const values = line.split(',').map(v => v.trim());
+                const row = {};
+                headers.forEach((header, index) => {
+                    row[header] = values[index];
+                    if (!isNaN(values[index])) {
+                        row[header] = parseFloat(values[index]);
+                    }
+                });
+                return row;
+            });
+        }
+
+        function createSortingChart(data) {
+            // Filter only the main sorting algorithms
+            const mainSorts = data.filter(row => {
+                const name = row['Section Name'];
+                return name.includes('Insertion Sort') && 
+                       !name.includes('Element') && 
+                       !name.includes('Array');
+            });
+
+            // Sort algorithms by execution time
+            mainSorts.sort((a, b) => a['Total Time'] - b['Total Time']);
+
+            // Prepare data for chart
+            const labels = mainSorts.map(row => {
+                // Clean up the section names for better display
+                return row['Section Name']
+                    .replace('Optimized Insertion Sort - ', 'Optimized - ')
+                    .replace('Baseline Insertion Sort', 'Baseline');
+            });
+            const times = mainSorts.map(row => row['Total Time']);
+
+            // Colors for different algorithms
+            const colors = [
+                'rgba(75, 192, 192, 0.7)',   // Teal
+                'rgba(54, 162, 235, 0.7)',   // Blue
+                'rgba(255, 99, 132, 0.7)',   // Pink
+                'rgba(255, 206, 86, 0.7)'    // Yellow
+            ];
+
+            const ctx = document.getElementById('sortingChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Runtime (seconds)',
+                        data: times,
+                        backgroundColor: colors,
+                        borderColor: colors.map(color => color.replace('0.7', '1')),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',  // Make it a horizontal bar chart
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Runtime: ${context.raw.toFixed(6)} seconds`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Runtime (seconds)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Display performance statistics
+            const fastest = mainSorts[0];
+            const slowest = mainSorts[mainSorts.length - 1];
+            const speedup = slowest['Total Time'] / fastest['Total Time'];
+
+            const statsHtml = `
+                <h3>Performance Analysis:</h3>
+                <p><span class="fastest">Fastest: ${fastest['Section Name']} (${fastest['Total Time'].toFixed(6)} seconds)</span></p>
+                <p><span class="slowest">Slowest: ${slowest['Section Name']} (${slowest['Total Time'].toFixed(6)} seconds)</span></p>
+                <p>Speed Difference: ${speedup.toFixed(2)}x</p>
+                <p>Number of algorithms compared: ${mainSorts.length}</p>
+            `;
+
+            document.getElementById('statsPanel').innerHTML = statsHtml;
+        }
+    </script>
 </body>
 </html>
