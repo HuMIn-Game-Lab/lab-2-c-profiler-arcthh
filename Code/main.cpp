@@ -9,6 +9,41 @@
 
 Profiler* profiler = nullptr;
 
+// Function to start Python HTTP server
+void startServer() {
+    // First kill any existing Python servers
+    #ifdef _WIN32
+    system("taskkill /F /IM python.exe > nul 2>&1");
+    system("start /B python -m http.server 8080");
+    #else
+    system("pkill -f 'python3 -m http.server' > /dev/null 2>&1");
+    system("python3 -m http.server 8080 &");
+    #endif
+    
+    // Give the server time to start
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+}
+
+// Function to open browser for both visualizers
+void openBrowsers() {
+    #ifdef _WIN32
+    system("start http://localhost:8080/Code/index.html");
+    #elif __APPLE__
+    system("open http://localhost:8080/Code/index.html");
+    #else
+    system("xdg-open http://localhost:8080/Code/index.html");
+    #endif
+}
+
+void cleanupServer() {
+    #ifdef _WIN32
+    system("taskkill /F /IM python.exe > nul 2>&1");
+    #else
+    system("pkill -f 'python3 -m http.server' > /dev/null 2>&1");
+    #endif
+}
+
+
 // Generate a large random array
 std::vector<int> generateRandomArray(int size) {
     std::vector<int> arr(size);
@@ -179,6 +214,7 @@ void runTest(vector<int> arrCopy1, vector <int> arrCopy2, vector <int> arrCopy3,
 
 
 int main() {
+    cleanupServer();
     // Seed for random number generation
     srand(time(0));
 
@@ -198,6 +234,20 @@ int main() {
     //profiler->printStats();
     profiler->printStatsToCSV("./data/profile_stats.csv");
     profiler->printStatsToJSON("./data/profile_stats.json");
+
+    // Open the visualizer in the default browser - index.html
+    cout << "Starting local server..." << endl;
+    startServer();
+    cout << "Opening visualizers in browser..." << endl;
+    openBrowsers();
+    cout << "Visualizers are running at:" << endl;
+    cout << "1. http://localhost:8080/Code/index.html" << endl;
+    cout << "Press Enter to exit and stop the server..." << endl;
+    
+    cin.get();
+    
+    // Cleanup
+    cleanupServer();
 
     delete profiler;
     profiler = nullptr;

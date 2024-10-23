@@ -2,214 +2,225 @@
   {
     "Section Name": "Baseline Insertion Sort",
     "Call Count": 1,
-    "Total Time": 0.194509,
-    "Min Time": 0.194509,
-    "Max Time": 0.194509,
-    "Avg Time": 0.194509,
+    "Total Time": 0.179665,
+    "Min Time": 0.179665,
+    "Max Time": 0.179665,
+    "Avg Time": 0.179665,
     "File Name": "./Code/main.cpp",
     "Function Name": "insertionSort",
-    "Line Number": 43
+    "Line Number": 78
   },
   {
     "Section Name": "Array Traversal",
     "Call Count": 1,
-    "Total Time": 0.194502,
-    "Min Time": 0.194502,
-    "Max Time": 0.194502,
-    "Avg Time": 0.194502,
+    "Total Time": 0.179657,
+    "Min Time": 0.179657,
+    "Max Time": 0.179657,
+    "Avg Time": 0.179657,
     "File Name": "./Code/main.cpp",
     "Function Name": "insertionSort",
-    "Line Number": 41
+    "Line Number": 76
   },
   {
     "Section Name": "Single Element Insertion",
     "Call Count": 9999,
-    "Total Time": 0.19133,
+    "Total Time": 0.176652,
     "Min Time": 7e-07,
-    "Max Time": 0.0003321,
-    "Avg Time": 1.9135e-05,
+    "Max Time": 0.0006862,
+    "Avg Time": 1.76669e-05,
     "File Name": "./Code/main.cpp",
     "Function Name": "insertionSort",
-    "Line Number": 39
+    "Line Number": 74
   },
   {
     "Section Name": "Element Shifting",
     "Call Count": 9999,
-    "Total Time": 0.184732,
+    "Total Time": 0.170108,
     "Min Time": 2e-07,
-    "Max Time": 0.0003304,
-    "Avg Time": 1.84751e-05,
+    "Max Time": 0.0006804,
+    "Avg Time": 1.70125e-05,
     "File Name": "./Code/main.cpp",
     "Function Name": "insertionSort",
-    "Line Number": 37
+    "Line Number": 72
   },
   {
     "Section Name": "Optimized Insertion Sort - Shifting",
     "Call Count": 1,
-    "Total Time": 0.204784,
-    "Min Time": 0.204784,
-    "Max Time": 0.204784,
-    "Avg Time": 0.204784,
+    "Total Time": 0.178935,
+    "Min Time": 0.178935,
+    "Max Time": 0.178935,
+    "Avg Time": 0.178935,
     "File Name": "./Code/main.cpp",
     "Function Name": "insertionSortOptimized1",
-    "Line Number": 71
+    "Line Number": 106
   },
   {
     "Section Name": "Array Processing",
     "Call Count": 1,
-    "Total Time": 0.204781,
-    "Min Time": 0.204781,
-    "Max Time": 0.204781,
-    "Avg Time": 0.204781,
+    "Total Time": 0.178932,
+    "Min Time": 0.178932,
+    "Max Time": 0.178932,
+    "Avg Time": 0.178932,
     "File Name": "./Code/main.cpp",
     "Function Name": "insertionSortOptimized1",
-    "Line Number": 69
+    "Line Number": 104
   },
   {
     "Section Name": "Element Processing",
     "Call Count": 9999,
-    "Total Time": 0.201261,
+    "Total Time": 0.175762,
     "Min Time": 1.2e-06,
-    "Max Time": 0.0003635,
-    "Avg Time": 2.01281e-05,
+    "Max Time": 0.0008396,
+    "Avg Time": 1.7578e-05,
     "File Name": "./Code/main.cpp",
     "Function Name": "insertionSortOptimized1",
-    "Line Number": 67
+    "Line Number": 102
   },
   {
     "Section Name": "Shift Operation",
     "Call Count": 9999,
-    "Total Time": 0.187791,
+    "Total Time": 0.163556,
     "Min Time": 2e-07,
-    "Max Time": 0.0003604,
-    "Avg Time": 1.8781e-05,
+    "Max Time": 0.0008346,
+    "Avg Time": 1.63572e-05,
     "File Name": "./Code/main.cpp",
     "Function Name": "insertionSortOptimized1",
-    "Line Number": 61
+    "Line Number": 96
   },
   {
     "Section Name": "Key Placement",
     "Call Count": 9999,
-    "Total Time": 0.002842,
+    "Total Time": 0.0025825,
     "Min Time": 1e-07,
-    "Max Time": 6.23e-05,
-    "Avg Time": 2.84228e-07,
+    "Max Time": 1.99e-05,
+    "Avg Time": 2.58276e-07,
     "File Name": "./Code/main.cpp",
     "Function Name": "insertionSortOptimized1",
-    "Line Number": 65
+    "Line Number": 100
   },
   {
     "Section Name": "Binary Search Operation",
     "Call Count": 9999,
-    "Total Time": 0.0132029,
-    "Min Time": 7e-07,
-    "Max Time": 1.98e-05,
-    "Avg Time": 1.32042e-06,
+    "Total Time": 0.0789879,
+    "Min Time": 1.4e-06,
+    "Max Time": 0.0005508,
+    "Avg Time": 7.89958e-06,
     "File Name": "./Code/main.cpp",
     "Function Name": "binarySearch",
-    "Line Number": 98
+    "Line Number": 133
   },
   {
     "Section Name": "Search Loop",
     "Call Count": 9999,
-    "Total Time": 0.0049879,
+    "Total Time": 0.0039653,
     "Min Time": 2e-07,
-    "Max Time": 1.06e-05,
-    "Avg Time": 4.9884e-07,
+    "Max Time": 2.61e-05,
+    "Avg Time": 3.9657e-07,
     "File Name": "./Code/main.cpp",
     "Function Name": "binarySearch",
-    "Line Number": 92
+    "Line Number": 127
   },
   {
     "Section Name": "Optimized Insertion Sort - Binary Search",
     "Call Count": 1,
-    "Total Time": 0.272395,
-    "Min Time": 0.272395,
-    "Max Time": 0.272395,
-    "Avg Time": 0.272395,
+    "Total Time": 0.345146,
+    "Min Time": 0.345146,
+    "Max Time": 0.345146,
+    "Avg Time": 0.345146,
     "File Name": "./Code/main.cpp",
     "Function Name": "insertionSortOptimized2",
-    "Line Number": 128
+    "Line Number": 163
   },
   {
     "Section Name": "Main Sort Loop",
     "Call Count": 1,
-    "Total Time": 0.272392,
-    "Min Time": 0.272392,
-    "Max Time": 0.272392,
-    "Avg Time": 0.272392,
+    "Total Time": 0.345143,
+    "Min Time": 0.345143,
+    "Max Time": 0.345143,
+    "Avg Time": 0.345143,
     "File Name": "./Code/main.cpp",
     "Function Name": "insertionSortOptimized2",
-    "Line Number": 126
+    "Line Number": 161
   },
   {
     "Section Name": "Single Pass",
     "Call Count": 9999,
-    "Total Time": 0.267464,
-    "Min Time": 2.2e-06,
-    "Max Time": 0.0003539,
-    "Avg Time": 2.67491e-05,
+    "Total Time": 0.34135,
+    "Min Time": 8.4e-06,
+    "Max Time": 0.0005908,
+    "Avg Time": 3.41384e-05,
     "File Name": "./Code/main.cpp",
     "Function Name": "insertionSortOptimized2",
-    "Line Number": 124
+    "Line Number": 159
   },
   {
     "Section Name": "Position Search",
     "Call Count": 9999,
-    "Total Time": 0.0214183,
-    "Min Time": 1.2e-06,
-    "Max Time": 3.84e-05,
-    "Avg Time": 2.14204e-06,
+    "Total Time": 0.0862331,
+    "Min Time": 7.3e-06,
+    "Max Time": 0.0005522,
+    "Avg Time": 8.62417e-06,
     "File Name": "./Code/main.cpp",
     "Function Name": "insertionSortOptimized2",
-    "Line Number": 114
+    "Line Number": 149
   },
   {
     "Section Name": "Array Shifting",
     "Call Count": 9999,
-    "Total Time": 0.232028,
-    "Min Time": 2e-07,
-    "Max Time": 0.0003061,
-    "Avg Time": 2.32052e-05,
+    "Total Time": 0.24376,
+    "Min Time": 3e-07,
+    "Max Time": 0.0004497,
+    "Avg Time": 2.43784e-05,
     "File Name": "./Code/main.cpp",
     "Function Name": "insertionSortOptimized2",
-    "Line Number": 121
+    "Line Number": 156
   },
   {
     "Section Name": "Optimized Insertion Sort - Early Exit",
     "Call Count": 1,
-    "Total Time": 3.46e-05,
-    "Min Time": 3.46e-05,
-    "Max Time": 3.46e-05,
-    "Avg Time": 3.46e-05,
+    "Total Time": 1.56e-05,
+    "Min Time": 1.56e-05,
+    "Max Time": 1.56e-05,
+    "Avg Time": 1.56e-05,
     "File Name": "./Code/main.cpp",
     "Function Name": "insertionSortOptimized3",
-    "Line Number": 162
+    "Line Number": 197
   },
   {
     "Section Name": "Sorting Process",
     "Call Count": 1,
-    "Total Time": 3.33e-05,
-    "Min Time": 3.33e-05,
-    "Max Time": 3.33e-05,
-    "Avg Time": 3.33e-05,
+    "Total Time": 1.43e-05,
+    "Min Time": 1.43e-05,
+    "Max Time": 1.43e-05,
+    "Avg Time": 1.43e-05,
     "File Name": "./Code/main.cpp",
     "Function Name": "insertionSortOptimized3",
-    "Line Number": 160
+    "Line Number": 195
   },
   {
     "Section Name": "Element Insertion",
     "Call Count": 1,
-    "Total Time": 1.57e-05,
-    "Min Time": 1.57e-05,
-    "Max Time": 1.57e-05,
-    "Avg Time": 1.57e-05,
+    "Total Time": 1.17e-05,
+    "Min Time": 1.17e-05,
+    "Max Time": 1.17e-05,
+    "Avg Time": 1.17e-05,
     "File Name": "./Code/main.cpp",
     "Function Name": "insertionSortOptimized3",
-    "Line Number": 152
+    "Line Number": 187
   },
   {
     "Section Name": "Comparison and Shift",
+    "Call Count": 1,
+    "Total Time": 3e-07,
+    "Min Time": 3e-07,
+    "Max Time": 3e-07,
+    "Avg Time": 3e-07,
+    "File Name": "./Code/main.cpp",
+    "Function Name": "insertionSortOptimized3",
+    "Line Number": 184
+  },
+  {
+    "Section Name": "Early Exit Check",
     "Call Count": 1,
     "Total Time": 2e-07,
     "Min Time": 2e-07,
@@ -217,17 +228,6 @@
     "Avg Time": 2e-07,
     "File Name": "./Code/main.cpp",
     "Function Name": "insertionSortOptimized3",
-    "Line Number": 149
-  },
-  {
-    "Section Name": "Early Exit Check",
-    "Call Count": 1,
-    "Total Time": 7.8e-06,
-    "Min Time": 7.8e-06,
-    "Max Time": 7.8e-06,
-    "Avg Time": 7.8e-06,
-    "File Name": "./Code/main.cpp",
-    "Function Name": "insertionSortOptimized3",
-    "Line Number": 156
+    "Line Number": 191
   }
 ]
