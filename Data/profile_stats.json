@@ -2,10 +2,10 @@
   {
     "Section Name": "Trig Speed Test",
     "Call Count": 1,
-    "Total Time": 0.168716,
-    "Min Time": 0.168716,
-    "Max Time": 0.168716,
-    "Avg Time": 0.168716,
+    "Total Time": 0.0833038,
+    "Min Time": 0.0833038,
+    "Max Time": 0.0833038,
+    "Avg Time": 0.0833038,
     "File Name": "./Code/main.cpp",
     "Function Name": "test1",
     "Line Number": 41
@@ -13,10 +13,10 @@
   {
     "Section Name": "Random Angle Generation",
     "Call Count": 1,
-    "Total Time": 0.0020546,
-    "Min Time": 0.0020546,
-    "Max Time": 0.0020546,
-    "Avg Time": 0.0020546,
+    "Total Time": 0.0015548,
+    "Min Time": 0.0015548,
+    "Max Time": 0.0015548,
+    "Avg Time": 0.0015548,
     "File Name": "./Code/main.cpp",
     "Function Name": "test1",
     "Line Number": 26
@@ -24,10 +24,10 @@
   {
     "Section Name": "Total Cos and Sin Compute",
     "Call Count": 1,
-    "Total Time": 0.166619,
-    "Min Time": 0.166619,
-    "Max Time": 0.166619,
-    "Avg Time": 0.166619,
+    "Total Time": 0.0816828,
+    "Min Time": 0.0816828,
+    "Max Time": 0.0816828,
+    "Avg Time": 0.0816828,
     "File Name": "./Code/main.cpp",
     "Function Name": "test1",
     "Line Number": 40
@@ -35,10 +35,10 @@
   {
     "Section Name": "Cos and Sin Compute",
     "Call Count": 100000,
-    "Total Time": 0.079874,
+    "Total Time": 0.0420533,
     "Min Time": 2e-07,
-    "Max Time": 0.0004209,
-    "Avg Time": 7.9874e-07,
+    "Max Time": 0.0003234,
+    "Avg Time": 4.20533e-07,
     "File Name": "./Code/main.cpp",
     "Function Name": "test1",
     "Line Number": 35
@@ -46,10 +46,10 @@
   {
     "Section Name": "Section A",
     "Call Count": 2,
-    "Total Time": 0.874847,
-    "Min Time": 0.274623,
-    "Max Time": 0.600224,
-    "Avg Time": 0.437423,
+    "Total Time": 0.853518,
+    "Min Time": 0.264203,
+    "Max Time": 0.589315,
+    "Avg Time": 0.426759,
     "File Name": "./Code/main.cpp",
     "Function Name": "testInterleavedProfiling",
     "Line Number": 178
@@ -57,10 +57,10 @@
   {
     "Section Name": "Section B",
     "Call Count": 2,
-    "Total Time": 0.699621,
-    "Min Time": 0.268118,
-    "Max Time": 0.431504,
-    "Avg Time": 0.349811,
+    "Total Time": 0.687485,
+    "Min Time": 0.265653,
+    "Max Time": 0.421832,
+    "Avg Time": 0.343743,
     "File Name": "./Code/main.cpp",
     "Function Name": "testInterleavedProfiling",
     "Line Number": 181
@@ -68,10 +68,10 @@
   {
     "Section Name": "Section C",
     "Call Count": 1,
-    "Total Time": 0.209124,
-    "Min Time": 0.209124,
-    "Max Time": 0.209124,
-    "Avg Time": 0.209124,
+    "Total Time": 0.202527,
+    "Min Time": 0.202527,
+    "Max Time": 0.202527,
+    "Avg Time": 0.202527,
     "File Name": "./Code/main.cpp",
     "Function Name": "testHierarchicalProfiling",
     "Line Number": 158

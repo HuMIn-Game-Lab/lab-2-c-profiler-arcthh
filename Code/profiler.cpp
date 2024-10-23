@@ -1,34 +1,30 @@
 #include "profiler.hpp"
-#include "time.hpp" //should be time.hpp
-#include <iostream>
-#include <iomanip> // For formatting the output
-#include <fstream>
-#include <limits>
-
+#include "time.hpp"
 
 //create a macro
 #define PROFILER_ENTER(sectionName) Profiler::GetInstance()->EnterSection(sectionName);
 #define PROFILER_EXIT(sectionName) Profiler::GetInstance()->ExitSection(sectionName, __LINE__, __FILE__, __FUNCTION__);
-//This macro above will replace the ExitSection function call with the ExitSection function call with the additional parameters of __LINE__, __FILE__, __FUNCTION__
+
 Profiler* Profiler::gProfiler = nullptr;
 
+// Constructor for Time Record Start and Destructor
 TimeRecordStart::TimeRecordStart(char const* sectionName, double secondsAtStart) : sectionName(sectionName), secondsAtStart(secondsAtStart) { };
 TimeRecordStart::~TimeRecordStart() { };
 
+// Constructor for Time Record Stop and Destructor
 TimeRecordStop::TimeRecordStop(char const* sectionName, double secondsAtStop, int lineNumber, const char* fileName, const char* functionName ) : sectionName(sectionName), elapsedTime(secondsAtStop), lineNumber(lineNumber), fileName(fileName), functionName(functionName) { };
 TimeRecordStop::TimeRecordStop(char const* sectionName, double secondsAtStop ) : sectionName(sectionName), elapsedTime(secondsAtStop), lineNumber(0), fileName("null"), functionName("null") { };
 TimeRecordStop::~TimeRecordStop() { };
 
-//need to fix this
+// Constructor for ProfilerScopeObject and Destructor
 ProfilerScopeObject::ProfilerScopeObject(char const* sectionName) : sectionName(sectionName) {
     Profiler::GetInstance()->EnterSection(sectionName);
 }
-
 ProfilerScopeObject::~ProfilerScopeObject() {
     Profiler::GetInstance()->ExitSection(sectionName);
 }
 
-// ProfilerStats constructor definition
+// Constructor for ProfilerStats and Destructor
 ProfilerStats::ProfilerStats(char const* sectionName)
     : sectionName(sectionName),
       count(0),
@@ -39,66 +35,41 @@ ProfilerStats::ProfilerStats(char const* sectionName)
       fileName(nullptr),
       functionName(nullptr),
       lineNumber(0) {}
+// Destructor for ProfilerStats (no dynamic memory to clean up here)
+ProfilerStats::~ProfilerStats() {}
 
-ProfilerStats::~ProfilerStats() {
-    // Destructor can be empty if there is no dynamic memory allocation
-}
-
-
+// Profiler constructor: Initializes the Profiler instance and reserves space for elapsed times
 Profiler::Profiler() {
     gProfiler = this;
-    //startTimes.reserve(100); //pre allocation
-    elapsedTimes.reserve(1000000); //pre allocation
-
-    //how coild i make this more dynamic? 
-    //config files or macros to adjust how much were allocation and compile with a macro flag
-
+    elapsedTimes.reserve(1000000); //Pre-allocate memory to store profiling data
 }
-//method checks to see if Gprofiler exists, if not, it will create a new Profiler and initialize
+
+// Profiler singleton: Creates or retrieves the single instance of the Profiler
 Profiler* Profiler::GetInstance() {
     if(gProfiler == nullptr) {
         gProfiler = new Profiler();
     }
     return gProfiler;
 }
+// Destructor for Profiler (could clean up dynamic resources here if necessary)
+Profiler::~Profiler() {}   
 
-Profiler::~Profiler() {
-    // for(auto& start : startTimes) {
-    //     delete start;
-    // }
-    // for(auto& elapsed : elapsedTimes) {
-    //     delete elapsed;
-    // }
-    // for(auto& stat : stats) {
-    //     delete stat.second;
-    // }
-}   
-
+// EnterSection: Records the start time for a section and stores it in the section map
 void Profiler::EnterSection(char const* sectionName) {
     double secondsAtStart = GetCurrentTimeSeconds();
-    //startTimes.emplace_back(sectionName, secondsAtStart);
-    //emplace_back is an optomized method that constructs the object in place,
-    // push_back constructs the object and then moves it to the vector
-    // TimeRecordStart* start = new TimeRecordStart(sectionName, secondsAtStart);
-    // startTimes.push_back(start);
-
-    // Push the section onto the stack
     sectionMap.emplace(sectionName, TimeRecordStart(sectionName, secondsAtStart));
-
 }
 
+// ExitSection: Overloaded function to support simple section exit (delegates to full exit function with additional details)
 void Profiler::ExitSection(char const* sectionName) {
-    double secondsAtStop = GetCurrentTimeSeconds();
-    // Delegate to the more complex ExitSection method, providing default values for line number, file name, and function name
-    //ExitSection(sectionName, 0, "unknown", "unknown");
-    
+    double secondsAtStop = GetCurrentTimeSeconds();    
 }
 
-//exit section v2
+// ExitSection (overloaded): Completes profiling for a section, calculates elapsed time, and reports the data
 void Profiler::ExitSection(char const* sectionName, int lineNumber, const char* fileName, const char* functionName) {
     double secondsAtStop = GetCurrentTimeSeconds();
 
-    // Use find to check if the section exists in the map
+    // Find the section in the map to retrieve its start time
     auto it = sectionMap.find(sectionName);
 
     if (it != sectionMap.end()) {
@@ -117,35 +88,31 @@ void Profiler::ExitSection(char const* sectionName, int lineNumber, const char* 
     }
 }
 
-// void Profiler::ReportSectionTime(char const* sectionName, double elapsedTime) {
-//     elapsedTimes.emplace_back(sectionName, elapsedTime);
-// }
-
+// ReportSectionTime: Updates the statistics for a given section based on its elapsed time
 void Profiler::ReportSectionTime(char const* sectionName, double elapsedTime, int lineNumber, const char* fileName, const char* functionName) {
-        // Check if the section already exists in the stats map
+    // Check if the section already exists in the stats map
     if (stats.find(sectionName) == stats.end()) {
-        stats[sectionName] = new ProfilerStats(sectionName);
+        stats[sectionName] = new ProfilerStats(sectionName);  // Create a new stats entry if it doesn't exist
     }
 
     // Update the stats for the section
     ProfilerStats* sectionStats = stats[sectionName];
-    sectionStats->count++;
-    sectionStats->totalTime += elapsedTime;
-    sectionStats->minTime = std::min(sectionStats->minTime, elapsedTime);
-    sectionStats->maxTime = std::max(sectionStats->maxTime, elapsedTime);
-    sectionStats->avgTime = sectionStats->totalTime / sectionStats->count;
+    sectionStats->count++;  // Increment the count of calls
+    sectionStats->totalTime += elapsedTime;  // Add to the total time
+    sectionStats->minTime = std::min(sectionStats->minTime, elapsedTime);  // Update minimum time
+    sectionStats->maxTime = std::max(sectionStats->maxTime, elapsedTime);  // Update maximum time
+    sectionStats->avgTime = sectionStats->totalTime / sectionStats->count;  // Calculate average time
 
-    // Optional: Update file, function, and line number for better tracking
+    // Update additional metadata for debugging purposes
     sectionStats->fileName = fileName;
     sectionStats->functionName = functionName;
     sectionStats->lineNumber = lineNumber;
-
-    //if break this line is the one we use
-    //elapsedTimes.emplace_back(sectionName, elapsedTime, lineNumber, fileName, functionName);
 }
 
+
+// printStatsToCSV: Writes the profiling statistics to a CSV file
 void Profiler::printStatsToCSV(const char* fileName) {
-    std::ofstream file(fileName);
+    std::ofstream file(fileName);  // Open the file
 
     // Check if the file is open
     if (!file.is_open()) {
@@ -153,10 +120,10 @@ void Profiler::printStatsToCSV(const char* fileName) {
         return;
     }
 
-    // Write CSV headers
+    // Write the CSV headers
     file << "Section Name, Call Count, Total Time, Min Time, Max Time, Avg Time, File Name, Function Name, Line Number\n";
 
-    // Iterate through the map of stats and output the details
+    // Write each section's statistics to the CSV
     for (const auto& entry : stats) {
         ProfilerStats* stat = entry.second;
         file << stat->sectionName << ", " 
@@ -174,8 +141,9 @@ void Profiler::printStatsToCSV(const char* fileName) {
     std::cout << "Profiler stats written to " << fileName << " in CSV format.\n";
 }
 
+// printStatsToJSON: Writes the profiling statistics to a JSON file
 void Profiler::printStatsToJSON(const char* fileName) {
-    std::ofstream file(fileName);
+    std::ofstream file(fileName);  // Open the file
 
     // Check if the file is open
     if (!file.is_open()) {
@@ -195,6 +163,7 @@ void Profiler::printStatsToJSON(const char* fileName) {
         }
         first = false;
 
+        // Write the JSON object for each section
         file << "  {\n";
         file << "    \"Section Name\": \"" << stat->sectionName << "\",\n";
         file << "    \"Call Count\": " << stat->count << ",\n";
@@ -214,6 +183,7 @@ void Profiler::printStatsToJSON(const char* fileName) {
     std::cout << "Profiler stats written to " << fileName << " in JSON format.\n";
 }
 
+// calculateStats: Updates the statistics based on recorded elapsed times
 void Profiler::calculateStats() {
     // Iterate through all the recorded elapsed times
     for (const auto& elapsed : elapsedTimes) {
@@ -241,6 +211,7 @@ void Profiler::calculateStats() {
     }
 }
 
+// printStats: Outputs the profiling statistics to the console
 void Profiler::printStats() {
     // Iterate through the map of stats and output the details
     for (const auto& entry : stats) {
@@ -257,6 +228,3 @@ void Profiler::printStats() {
         std::cout << "\n";
     }
 }
-
-
-//memory management is slow, so we do pre allocation in Profiler()
