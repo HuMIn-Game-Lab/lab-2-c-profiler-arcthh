@@ -1,5 +1,8 @@
 Section Name, Call Count, Total Time, Min Time, Max Time, Avg Time, File Name, Function Name, Line Number
-Trig Speed Test, 1, 0.0331253, 0.0331253, 0.0331253, 0.0331253, ./Code/main.cpp, test1, 38
-Random Angle Generation, 1, 0.0018534, 0.0018534, 0.0018534, 0.0018534, ./Code/main.cpp, test1, 23
-Total Cos and Sin Compute, 1, 0.0312568, 0.0312568, 0.0312568, 0.0312568, ./Code/main.cpp, test1, 37
-Cos and Sin Compute, 100000, 0.0174086, 1e-07, 1.98e-05, 1.74086e-07, ./Code/main.cpp, test1, 32
+Trig Speed Test, 1, 0.0601566, 0.0601566, 0.0601566, 0.0601566, ./Code/main.cpp, test1, 41
+Random Angle Generation, 1, 0.0041369, 0.0041369, 0.0041369, 0.0041369, ./Code/main.cpp, test1, 26
+Total Cos and Sin Compute, 1, 0.055934, 0.055934, 0.055934, 0.055934, ./Code/main.cpp, test1, 40
+Cos and Sin Compute, 100000, 0.0292968, 2e-07, 9.44e-05, 2.92968e-07, ./Code/main.cpp, test1, 35
+Section A, 2, 0.849451, 0.260878, 0.588572, 0.424725, ./Code/main.cpp, testInterleavedProfiling, 178
+Section B, 2, 0.699588, 0.2723, 0.427288, 0.349794, ./Code/main.cpp, testInterleavedProfiling, 181
+Section C, 1, 0.206276, 0.206276, 0.206276, 0.206276, ./Code/main.cpp, testHierarchicalProfiling, 158

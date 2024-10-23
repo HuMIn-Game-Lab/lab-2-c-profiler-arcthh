@@ -4,6 +4,9 @@
 #include <cstring>
 #include <cstdio>
 #include <cmath>
+#include <thread>  // For std::this_thread::sleep_for
+#include <chrono>  // For std::chrono::milliseconds
+
 
 constexpr float DEGREES_TO_RADIANS = (3.14159f / 360.f);
 
@@ -101,6 +104,38 @@ void test3(){
     // PROFILER_EXIT("Trig Speed Test");
     std::cout << "Biggest cos+sin = " << biggestSoFar << std::endl;
 }
+void testInterleaving() {
+    PROFILER_ENTER("Main Task");
+    constexpr int NUM_ITERATIONS = 50;  // You can change the iteration count as needed
+    float result = 0.0f;
+
+    // Start Subtask 1
+    PROFILER_ENTER("Subtask 1");
+    for (int i = 0; i < NUM_ITERATIONS; ++i) {
+        result += static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+    }
+    // Instead of ending Subtask 1 here, we interleave with another task
+    
+    // Start Subtask 2 before Subtask 1 finishes
+    PROFILER_ENTER("Subtask 2");
+    for (int i = 0; i < NUM_ITERATIONS; ++i) {
+        result += static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * 2.0f;
+    }
+    // Now finish Subtask 1
+    PROFILER_EXIT("Subtask 1");
+
+    // Continue Subtask 2 after Subtask 1 has finished
+    for (int i = 0; i < NUM_ITERATIONS / 2; ++i) {
+        result += static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * 1.5f;
+    }
+    PROFILER_EXIT("Subtask 2");
+
+    // End the Main Task
+    PROFILER_EXIT("Main Task");
+
+    // Print out a simple result from the calculation
+    std::cout << "Interleaving result: " << result << std::endl;
+}
 
 void runTest() {
     test1();
@@ -108,8 +143,51 @@ void runTest() {
     //test3();
 }
 
+void testHierarchicalProfiling() {
+    // Enter nested sections A, B, C
+    PROFILER_ENTER("Section A");
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));  // Simulate work in A
+
+    PROFILER_ENTER("Section B");
+    std::this_thread::sleep_for(std::chrono::milliseconds(150));  // Simulate work in B
+
+    PROFILER_ENTER("Section C");
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));  // Simulate work in C
+
+    // Leave sections in reverse order
+    PROFILER_EXIT("Section C");  // Exiting C
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));  // Simulate more work in B
+
+    PROFILER_EXIT("Section B");  // Exiting B
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));  // Simulate more work in A
+
+    PROFILER_EXIT("Section A");  // Exiting A
+
+    std::cout << "Hierarchical profiling test completed." << std::endl;
+}
+
+void testInterleavedProfiling() {
+    // Enter interleaved sections A and B
+    PROFILER_ENTER("Section A");
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));  // Simulate work in A
+
+    PROFILER_ENTER("Section B");
+    std::this_thread::sleep_for(std::chrono::milliseconds(150));  // Simulate work in B
+
+    // Interleave the exits: Leave A before B
+    PROFILER_EXIT("Section A");  // Exiting A before B
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));  // Simulate more work in B
+
+    PROFILER_EXIT("Section B");  // Exiting B after A
+
+    std::cout << "Interleaved profiling test completed." << std::endl;
+}
+
 int main() {
     profiler = Profiler::GetInstance();
+    //testInterleaving();
+    testHierarchicalProfiling();
+    testInterleavedProfiling();
     runTest();
     profiler->calculateStats();  // Aggregate the statistics
     profiler->printStatsToCSV("profile_stats.csv");

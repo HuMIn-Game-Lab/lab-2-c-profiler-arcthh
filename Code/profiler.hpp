@@ -2,6 +2,8 @@
 #include <cfloat>
 #include <vector>
 #include <map>
+#include <stack>
+#include <cstring>
 
 #define PROFILER_ENTER(sectionName) Profiler::GetInstance()->EnterSection(sectionName);
 #define PROFILER_EXIT(sectionName) Profiler::GetInstance()->ExitSection(sectionName, __LINE__, __FILE__, __FUNCTION__);
@@ -79,6 +81,9 @@ class Profiler{
         void ReportSectionTime(char const* sectionName, double elapsedTime);
         void ReportSectionTime(char const* sectionName, double elapsedTime, int lineNumber, const char* fileName, const char* functionName);
         std::map<char const*, ProfilerStats*> stats;
-        std::vector<TimeRecordStart> startTimes;
+       // std::vector<TimeRecordStart> startTimes;
         std::vector<TimeRecordStop> elapsedTimes;
+
+        std::map<const char*, TimeRecordStart> sectionMap;
+
 };

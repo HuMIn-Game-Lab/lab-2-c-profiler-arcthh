@@ -10,7 +10,6 @@
 #define PROFILER_ENTER(sectionName) Profiler::GetInstance()->EnterSection(sectionName);
 #define PROFILER_EXIT(sectionName) Profiler::GetInstance()->ExitSection(sectionName, __LINE__, __FILE__, __FUNCTION__);
 //This macro above will replace the ExitSection function call with the ExitSection function call with the additional parameters of __LINE__, __FILE__, __FUNCTION__
-
 Profiler* Profiler::gProfiler = nullptr;
 
 TimeRecordStart::TimeRecordStart(char const* sectionName, double secondsAtStart) : sectionName(sectionName), secondsAtStart(secondsAtStart) { };
@@ -48,7 +47,7 @@ ProfilerStats::~ProfilerStats() {
 
 Profiler::Profiler() {
     gProfiler = this;
-    startTimes.reserve(100); //pre allocation
+    //startTimes.reserve(100); //pre allocation
     elapsedTimes.reserve(1000000); //pre allocation
 
     //how coild i make this more dynamic? 
@@ -77,59 +76,72 @@ Profiler::~Profiler() {
 
 void Profiler::EnterSection(char const* sectionName) {
     double secondsAtStart = GetCurrentTimeSeconds();
-    startTimes.emplace_back(sectionName, secondsAtStart);
+    //startTimes.emplace_back(sectionName, secondsAtStart);
     //emplace_back is an optomized method that constructs the object in place,
     // push_back constructs the object and then moves it to the vector
     // TimeRecordStart* start = new TimeRecordStart(sectionName, secondsAtStart);
     // startTimes.push_back(start);
 
     // Push the section onto the stack
-    //sectionStack.push(TimeRecordStart(sectionName, secondsAtStart));
+    sectionMap.emplace(sectionName, TimeRecordStart(sectionName, secondsAtStart));
 
 }
 
 void Profiler::ExitSection(char const* sectionName) {
     double secondsAtStop = GetCurrentTimeSeconds();
-    TimeRecordStart const& currentSection = startTimes.back();
-
-    #if defined(DEBUG_PROFILER)
-    //verify the stack isn't empty
-    
-    //verify the currentSection matches the sectionName
-    #endif
-
-    double elapsedTime = secondsAtStop - currentSection.secondsAtStart; 
-    //ReportSectionTime(sectionName, elapsedTime, __LINE__, __FILE__, __FUNCTION__);
-    //commented out use of function ReportSectionTime to avoid overhead. Can grab information from macro that exists in the TimeRecordStop class
-    elapsedTimes.emplace_back(sectionName, elapsedTime);
-    startTimes.pop_back();
+    // Delegate to the more complex ExitSection method, providing default values for line number, file name, and function name
+    //ExitSection(sectionName, 0, "unknown", "unknown");
     
 }
 
 //exit section v2
 void Profiler::ExitSection(char const* sectionName, int lineNumber, const char* fileName, const char* functionName) {
     double secondsAtStop = GetCurrentTimeSeconds();
-    TimeRecordStart const& currentSection = startTimes.back();
 
-    // #if defined(DEBUG_PROFILER)
-    // //verify the stack isn't empty
-    
-    // //verify the currentSection matches the sectionName
-    // #endif
+    // Use find to check if the section exists in the map
+    auto it = sectionMap.find(sectionName);
 
-    double elapsedTime = secondsAtStop - currentSection.secondsAtStart; 
-    ReportSectionTime(sectionName, elapsedTime, lineNumber, fileName, functionName);
-    //commented out use of function ReportSectionTime to avoid overhead. Can grab information from macro that exists in the TimeRecordStop class
-   //commenting out for now elapsedTimes.emplace_back(sectionName, elapsedTime);
-    startTimes.pop_back();
+    if (it != sectionMap.end()) {
+        TimeRecordStart sectionStart = it->second;
+
+        // Calculate the elapsed time
+        double elapsedTime = secondsAtStop - sectionStart.secondsAtStart;
+
+        // Remove the section from the map
+        sectionMap.erase(it);
+
+        // Report the time spent in this section
+        ReportSectionTime(sectionName, elapsedTime, lineNumber, fileName, functionName);
+    } else {
+        std::cerr << "Error: Mismatched section exit for " << sectionName << std::endl;
+    }
 }
 
-void Profiler::ReportSectionTime(char const* sectionName, double elapsedTime) {
-    elapsedTimes.emplace_back(sectionName, elapsedTime);
-}
+// void Profiler::ReportSectionTime(char const* sectionName, double elapsedTime) {
+//     elapsedTimes.emplace_back(sectionName, elapsedTime);
+// }
 
 void Profiler::ReportSectionTime(char const* sectionName, double elapsedTime, int lineNumber, const char* fileName, const char* functionName) {
-    elapsedTimes.emplace_back(sectionName, elapsedTime, lineNumber, fileName, functionName);
+        // Check if the section already exists in the stats map
+    if (stats.find(sectionName) == stats.end()) {
+        stats[sectionName] = new ProfilerStats(sectionName);
+    }
+
+    // Update the stats for the section
+    ProfilerStats* sectionStats = stats[sectionName];
+    sectionStats->count++;
+    sectionStats->totalTime += elapsedTime;
+    sectionStats->minTime = std::min(sectionStats->minTime, elapsedTime);
+    sectionStats->maxTime = std::max(sectionStats->maxTime, elapsedTime);
+    sectionStats->avgTime = sectionStats->totalTime / sectionStats->count;
+
+    // Optional: Update file, function, and line number for better tracking
+    sectionStats->fileName = fileName;
+    sectionStats->functionName = functionName;
+    sectionStats->lineNumber = lineNumber;
+
+    //if break this line is the one we use
+    //elapsedTimes.emplace_back(sectionName, elapsedTime, lineNumber, fileName, functionName);
 }
 
 void Profiler::printStatsToCSV(const char* fileName) {
