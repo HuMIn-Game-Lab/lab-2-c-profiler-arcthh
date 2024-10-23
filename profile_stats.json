@@ -1,0 +1,46 @@
+[
+  {
+    "Section Name": "Trig Speed Test",
+    "Call Count": 1,
+    "Total Time": 0.0331253,
+    "Min Time": 0.0331253,
+    "Max Time": 0.0331253,
+    "Avg Time": 0.0331253,
+    "File Name": "./Code/main.cpp",
+    "Function Name": "test1",
+    "Line Number": 38
+  },
+  {
+    "Section Name": "Random Angle Generation",
+    "Call Count": 1,
+    "Total Time": 0.0018534,
+    "Min Time": 0.0018534,
+    "Max Time": 0.0018534,
+    "Avg Time": 0.0018534,
+    "File Name": "./Code/main.cpp",
+    "Function Name": "test1",
+    "Line Number": 23
+  },
+  {
+    "Section Name": "Total Cos and Sin Compute",
+    "Call Count": 1,
+    "Total Time": 0.0312568,
+    "Min Time": 0.0312568,
+    "Max Time": 0.0312568,
+    "Avg Time": 0.0312568,
+    "File Name": "./Code/main.cpp",
+    "Function Name": "test1",
+    "Line Number": 37
+  },
+  {
+    "Section Name": "Cos and Sin Compute",
+    "Call Count": 100000,
+    "Total Time": 0.0174086,
+    "Min Time": 1e-07,
+    "Max Time": 1.98e-05,
+    "Avg Time": 1.74086e-07,
+    "File Name": "./Code/main.cpp",
+    "Function Name": "test1",
+    "Line Number": 32
+  }
+]

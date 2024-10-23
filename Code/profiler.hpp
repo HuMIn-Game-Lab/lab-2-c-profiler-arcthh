@@ -54,6 +54,8 @@ class ProfilerStats
         const char* fileName;
         const char* functionName;
         int lineNumber;
+
+        
 };
 
 class Profiler{
@@ -66,6 +68,8 @@ class Profiler{
         void calculateStats();
         void printStats();
         void printStatsToCSV(const char* fileName);
+        void printStatsToJSON(const char* fileName);
+
 
         static Profiler* gProfiler;
         static Profiler* GetInstance(); //singleton pattern

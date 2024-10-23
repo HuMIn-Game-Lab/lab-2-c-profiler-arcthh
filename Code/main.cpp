@@ -104,13 +104,17 @@ void test3(){
 
 void runTest() {
     test1();
-    test2();
-    test3();
+    //test2();
+    //test3();
 }
 
 int main() {
     profiler = Profiler::GetInstance();
     runTest();
+    profiler->calculateStats();  // Aggregate the statistics
+    profiler->printStatsToCSV("profile_stats.csv");
+    profiler->printStatsToJSON("profile_stats.json");
+
     delete profiler;
     profiler = nullptr;
     return 0;

@@ -1,0 +1,5 @@
+Section Name, Call Count, Total Time, Min Time, Max Time, Avg Time, File Name, Function Name, Line Number
+Trig Speed Test, 1, 0.0331253, 0.0331253, 0.0331253, 0.0331253, ./Code/main.cpp, test1, 38
+Random Angle Generation, 1, 0.0018534, 0.0018534, 0.0018534, 0.0018534, ./Code/main.cpp, test1, 23
+Total Cos and Sin Compute, 1, 0.0312568, 0.0312568, 0.0312568, 0.0312568, ./Code/main.cpp, test1, 37
+Cos and Sin Compute, 100000, 0.0174086, 1e-07, 1.98e-05, 1.74086e-07, ./Code/main.cpp, test1, 32
